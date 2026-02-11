@@ -1,477 +1,626 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>💘 Valentine</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine 💘</title>
   <style>
     :root{
-      --bg1:#fff0f6; --bg2:#ffe0ee; --ink:#2b1b22;
-      --pink:#ff2f78; --pink2:#ff6fa1;
-      --card:#ffffffcc; --shadow: 0 18px 55px rgba(0,0,0,.12);
+      --pink:#ff4fa3;
+      --pink2:#ff77b7;
+      --rose:#ff2d55;
+      --soft:#fff1f7;
+      --card:#ffffffcc;
+      --text:#2a1630;
+      --muted:#6b3a5a;
+      --yes1:#ff4fa3;
+      --yes2:#ff77b7;
+      --no1:#ff6b8a;
+      --no2:#ff9fb5;
+      --shadow: 0 18px 50px rgba(255,79,163,.22);
     }
+
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;color:var(--ink)}
+    html,body{height:100%}
     body{
-      overflow:hidden;
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
       background:
-        radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 55%),
-        radial-gradient(1000px 700px at 80% 20%, #ffeaf2, transparent 60%),
-        linear-gradient(135deg, var(--bg1), #fff);
+        radial-gradient(900px 600px at 10% 10%, #ffd1e866, transparent 55%),
+        radial-gradient(900px 600px at 90% 30%, #ffb4d466, transparent 60%),
+        linear-gradient(180deg, #fff6fb, #ffe7f3);
+      overflow:hidden;
     }
 
-    /* floating bg hearts */
-    #bgHearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:.24;z-index:0}
-    .bg-heart{position:absolute;bottom:-10vh;font-size:18px;animation:floatUp linear infinite;opacity:.9}
-    @keyframes floatUp{
-      0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}
-      10%{opacity:.9}
-      100%{transform:translateY(-120vh) translateX(20px) rotate(18deg);opacity:0}
+    /* soft vignette */
+    body::after{
+      content:"";
+      position:fixed; inset:0;
+      background: radial-gradient(1200px 700px at 50% 35%, transparent 55%, rgba(255,45,85,.08) 100%);
+      pointer-events:none;
     }
 
-    .wrap{position:relative;height:100%;display:flex;align-items:center;justify-content:center;padding:18px;z-index:1}
-    .card{
-      width:min(620px,94vw);
-      background:var(--card);
-      border:1px solid rgba(255,255,255,.6);
-      border-radius:24px;
-      box-shadow:var(--shadow);
-      backdrop-filter: blur(12px);
-      padding:26px 22px 20px;
-      text-align:center;
+    /* Floating hearts layer container */
+    .bg{
+      position:fixed; inset:0;
+      overflow:hidden;
+      pointer-events:none;
+      z-index:0;
+    }
+
+    .wrap{
       position:relative;
-    }
-    .chip{
-      display:inline-flex;align-items:center;gap:10px;
-      padding:10px 14px;background:#fff;border-radius:999px;
-      box-shadow:0 10px 30px rgba(0,0,0,.08);
-      font-weight:1000;
-    }
-    h1{margin:14px 0 8px;font-size:clamp(22px,3.2vw,34px);letter-spacing:-.02em}
-    p{margin:0 0 16px;opacity:.85}
-
-    .toast{
-      min-height:40px;
-      margin:12px 0 22px;
-      padding:0 6px;
-      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:18px;
       z-index:1;
-      font-weight:900;
     }
 
-    .row{
-      display:flex;
-      gap:12px;
-      justify-content:center;
-      align-items:center;
-      flex-wrap:wrap;
+    .card{
+      width:min(640px, 100%);
+      background:var(--card);
+      border:1px solid rgba(255,79,163,.20);
+      border-radius:26px;
+      padding:22px 18px;
+      box-shadow: var(--shadow);
+      text-align:center;
+      backdrop-filter: blur(10px);
       position:relative;
-      z-index:2;
-      padding-top:8px;
+      overflow:hidden;
+    }
+
+    .ribbon{
+      position:absolute;
+      inset:auto -30px -30px auto;
+      width:180px; height:180px;
+      background: radial-gradient(circle, rgba(255,79,163,.18), transparent 60%);
+      transform: rotate(20deg);
+    }
+
+    h1{
+      margin:6px 0 6px;
+      font-size: clamp(22px, 4.6vw, 36px);
+      letter-spacing:.2px;
+    }
+    .subtitle{
+      margin:0 0 16px;
+      color:var(--muted);
+      font-size: clamp(14px, 2.6vw, 16px);
+      line-height:1.35;
+    }
+
+    /* Cute vinyl */
+    .vinyl-wrap{
+      display:flex;
+      justify-content:center;
+      margin:8px 0 12px;
+    }
+    .vinyl{
+      width:130px; height:130px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 50% 50%, #ffffff 0 9px, transparent 10px),
+        radial-gradient(circle at 50% 50%, #ffd1e8 0 28px, #ff8fc6 29px 100%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.0) 0 3px, rgba(255,255,255,.22) 3px 6px);
+      box-shadow: 0 12px 28px rgba(255,79,163,.22);
+      position:relative;
+      animation: spin 2.6s linear infinite;
+    }
+    .vinyl::after{
+      content:"";
+      position:absolute;
+      inset:18px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle, #ffffff 0 18px, #ff4fa3 19px 60%, #ffb703 61% 100%);
+      opacity:.85;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-zone{
+      position:relative;
+      width:min(520px, 100%);
+      height:190px;
+      margin:0 auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:16px;
     }
 
     button{
-      border:0;border-radius:16px;padding:14px 18px;font-size:18px;cursor:pointer;
-      transition:transform .15s ease, filter .15s ease, opacity .25s ease;
-      user-select:none;-webkit-tap-highlight-color:transparent;
-      box-shadow:0 12px 30px rgba(0,0,0,.10);
-      min-width:170px;
-      font-weight:1000;
-    }
-    #yesBtn{
-      background:linear-gradient(90deg,var(--pink),var(--pink2));
-      color:#fff;
-      transform-origin:center bottom;
-      position:relative;
-      z-index:2;
-    }
-    #noBtn{
-      background:#fff;
-      border:1px solid rgba(0,0,0,.10);
-      color:#222;
-      position:relative;
-      z-index:1;
-    }
-    button:active{transform:scale(.98)}
-    .hidden{opacity:0;pointer-events:none}
-
-    /* YES heart beat */
-    #yesHeart{
-      display:inline-block;margin-left:6px;
-      transform-origin:center;
-      animation:heartBeat 1.2s ease-in-out infinite;
-    }
-    @keyframes heartBeat{
-      0%,100%{transform:scale(1)}
-      50%{transform:scale(1.25)}
-    }
-
-    /* NO moves around the SCREEN (not cramped in the row) */
-    #noBtn.runaway{
-      position:fixed;     /* screen space */
-      z-index:9999;
-      pointer-events:auto;
-    }
-
-    /* hearts burst on YES */
-    .pop-heart{
-      position:fixed;font-size:20px;pointer-events:none;
-      animation:popUp 1.35s ease-out forwards;
-      z-index:9997;
-    }
-    @keyframes popUp{
-      0%{transform:translateY(0) scale(0.8);opacity:0}
-      20%{opacity:1}
-      100%{transform:translateY(-120px) scale(1.35);opacity:0}
-    }
-
-    /* Vinyl (same page, appears after YES; no auto-scroll) */
-    #vinylArea{
-      margin-top:18px;
-      display:none;
-    }
-    #vinylArea.show{display:block;}
-    #vinylCase{
-      width:240px;
-      height:160px;
-      border-radius:18px;
-      background:linear-gradient(135deg,#fff,#ffe6f1);
-      border:2px solid rgba(0,0,0,.08);
-      box-shadow:0 18px 40px rgba(0,0,0,.18);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      gap:6px;
+      border:0;
+      padding:14px 18px;
+      border-radius:16px;
+      font-size:16px;
+      font-weight:800;
       cursor:pointer;
+      transition: transform .12s ease, filter .18s ease;
       user-select:none;
-      -webkit-tap-highlight-color:transparent;
+      -webkit-tap-highlight-color: transparent;
+      box-shadow: 0 14px 28px rgba(255,79,163,.18);
+    }
+    button:active{ transform: scale(.98); }
+
+    #yesBtn{
+      background: linear-gradient(135deg, var(--yes1), var(--yes2));
+      color:#fff;
+    }
+    #yesBtn:hover{ filter: brightness(1.03); }
+
+    /* No button: we animate its transform smoothly */
+    #noBtn{
+      position:absolute;
+      left: 66%;
+      top: 56%;
+      background: linear-gradient(135deg, var(--no1), var(--no2));
+      color:#5b1630;
+      box-shadow: 0 14px 28px rgba(255,107,138,.22);
+      will-change: transform;
+    }
+    #noBtn:hover{ filter: brightness(1.02); }
+
+    .hint{
+      margin-top:8px;
+      font-size:12px;
+      color: rgba(107,58,90,.78);
+    }
+
+    /* Dialog bubble for "No" catches */
+    .toast{
+      position:absolute;
+      left:50%;
+      top:10px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.86);
+      border: 1px solid rgba(255,79,163,.18);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
+      font-size: 14px;
+      color: #6b2c53;
+      box-shadow: 0 14px 30px rgba(255,79,163,.18);
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .25s ease, transform .25s ease;
+      z-index:5;
+      white-space:nowrap;
+      max-width: calc(100% - 24px);
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .toast.show{
+      opacity:1;
+      transform: translateX(-50%) translateY(4px);
+    }
+
+    /* Success overlay */
+    .overlay{
+      position:fixed; inset:0;
+      display:none;
+      place-items:center;
+      background: rgba(255,246,251,.9);
+      backdrop-filter: blur(8px);
+      z-index:999;
+      padding:18px;
+    }
+    .overlay.show{ display:grid; }
+
+    .success{
+      width:min(700px, 100%);
+      border:1px solid rgba(255,79,163,.22);
+      border-radius:26px;
+      background:#ffffffd8;
+      box-shadow: 0 25px 80px rgba(255,79,163,.25);
+      padding:22px 18px;
+      text-align:center;
       position:relative;
       overflow:hidden;
-      margin: 0 auto;
     }
-    #vinylCase .label{
-      font-weight:1000;
-      font-size:14px;
-      padding:6px 10px;
-      border-radius:999px;
-      background:#fff;
-      border:1px solid rgba(0,0,0,.06);
+    .success h2{
+      margin:8px 0 6px;
+      font-size: clamp(26px, 5vw, 44px);
     }
-    #vinylCase .mini{
-      font-size:12px;
-      opacity:.8;
-      font-weight:800;
-    }
-    #lid{
-      position:absolute;left:0;top:0;width:100%;height:100%;
-      transform-origin:left center;
-      pointer-events:none;
-    }
-    #vinylCase.open #lid{ animation: lidOpen .35s ease forwards; }
-    @keyframes lidOpen{ from{transform:rotateY(0deg)} to{transform:rotateY(-25deg)} }
-
-    #record{
-      width:86px;height:86px;border-radius:50%;
-      background: radial-gradient(circle at 50% 50%, #000 0 18%, #222 18% 34%, #111 34% 52%, #000 52% 100%);
-      box-shadow: inset 0 0 0 4px rgba(255,255,255,.06);
-      position:absolute; right:18px; top:38px;
-      opacity:0;
-      transform: translateX(-24px) scale(.95);
-      transition: opacity .25s ease, transform .35s ease;
-    }
-    #record::after{
-      content:"";
-      position:absolute; inset:34px; border-radius:50%;
-      background:linear-gradient(90deg,var(--pink),var(--pink2));
-      box-shadow:0 0 0 3px rgba(255,255,255,.15);
-    }
-    #vinylCase.open #record{ opacity:1; transform: translateX(0) scale(1); }
-    #record.spin{ animation: spin 1.05s linear infinite; }
-    @keyframes spin{
-      from{ transform: translateX(0) scale(1) rotate(0deg); }
-      to{ transform: translateX(0) scale(1) rotate(360deg); }
+    .success p{
+      margin:0 0 16px;
+      color: rgba(107,58,90,.9);
     }
 
-    .note{
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:center;
+      margin-top:8px;
+    }
+
+    .btn2{
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      color:#09101f;
+      font-weight:900;
+    }
+    .btn3{
+      background: linear-gradient(135deg, #34d399, #a7f3d0);
+      color:#062015;
+      font-weight:900;
+    }
+
+    /* Confetti */
+    .confetti{
       position:fixed;
-      z-index:9200;
+      width:10px; height:16px;
+      top:-20px;
+      border-radius:4px;
+      opacity:.95;
+      pointer-events:none;
+      animation: confFall linear forwards;
+      z-index:1000;
+    }
+    @keyframes confFall{
+      to{ transform: translateY(120vh) rotate(720deg); opacity:0.95; }
+    }
+
+    /* Heart particles */
+    .float-heart{
+      position:absolute;
+      left:0; top:0;
+      font-size:18px;
+      opacity:.9;
+      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
+      animation: rise linear forwards;
+    }
+    @keyframes rise{
+      from{ transform: translate(var(--x), 110vh) scale(var(--s)); opacity:0; }
+      10%{ opacity:.95; }
+      to{ transform: translate(calc(var(--x) + var(--drift)), -15vh) scale(calc(var(--s) + .15)); opacity:0; }
+    }
+
+    /* little sparkle hearts that appear on interactions */
+    .pop{
+      position:fixed;
       font-size:18px;
       pointer-events:none;
-      animation:noteFloat 2.2s ease-in forwards;
       opacity:.95;
+      animation: popUp .9s ease forwards;
+      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
+      z-index:50;
     }
-    @keyframes noteFloat{
-      0%{transform:translateY(0) translateX(0) scale(.9);opacity:0}
-      15%{opacity:1}
-      100%{transform:translateY(-160px) translateX(var(--dx)) scale(1.2);opacity:0}
+    @keyframes popUp{
+      from{ transform: translateY(0) scale(.9); opacity:0; }
+      20%{ opacity:1; }
+      to{ transform: translateY(-60px) scale(1.12); opacity:0; }
+    }
+
+    @media (max-width:420px){
+      button{ width:140px; }
+      .btn-zone{ height:210px; }
     }
   </style>
 </head>
+
 <body>
-  <div id="bgHearts"></div>
+  <div class="bg" id="bg"></div>
 
   <div class="wrap">
     <div class="card">
-      <div class="chip">💘 To the love of my life Sherkima</div>
-      <h1>Will you be my Valentine?</h1>
-      <p>I’m asking nicely… but the buttons might disagree 😌</p>
+      <div class="ribbon" aria-hidden="true"></div>
+      <div class="toast" id="toast">🙂</div>
 
-      <div class="toast" id="toast"></div>
-
-      <div class="row" id="btnRow">
-        <button id="yesBtn">YES <span id="yesHeart">💝</span></button>
-        <button id="noBtn">No 🙃</button>
+      <div class="vinyl-wrap">
+        <div class="vinyl" aria-hidden="true"></div>
       </div>
 
-      <div id="vinylArea">
-        <p style="margin:14px 0 10px; font-weight:1000;">One more thing… 😌🎶</p>
-        <div id="vinylCase" role="button" aria-label="Vinyl surprise">
-          <div class="label" id="vinylLabel">🎁 Click me for a surprise</div>
-          <div class="mini" id="vinylMini">I promise it’s cute.</div>
-          <div id="lid" aria-hidden="true"></div>
-          <div id="record" aria-hidden="true"></div>
-        </div>
+      <h1>To the love of my life Sherkima 💗</h1>
+      <p class="subtitle">
+        I have one important question… and you’re not allowed to escape it 😌
+      </p>
+
+      <div class="btn-zone" id="btnZone">
+        <button id="yesBtn">Yes ✅</button>
+        <button id="noBtn">No ❌</button>
+      </div>
+
+      <div class="hint">Try “No” if you want… it’s cute either way. 💘</div>
+    </div>
+  </div>
+
+  <div class="overlay" id="overlay">
+    <div class="success">
+      <h2>You said YESSS 💖</h2>
+      <p>
+        I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹
+      </p>
+      <div class="actions">
+        <button class="btn3" id="playBtn">Play me ▶️</button>
+        <button class="btn2" id="replayBtn">Replay 🔁</button>
       </div>
     </div>
   </div>
 
-  <audio id="audio" preload="auto">
-    <source src="song.m4a" type="audio/mp4">
-  </audio>
+  <script>
+    // ===== Elements
+    const bg = document.getElementById("bg");
+    const noBtn = document.getElementById("noBtn");
+    const yesBtn = document.getElementById("yesBtn");
+    const btnZone = document.getElementById("btnZone");
+    const overlay = document.getElementById("overlay");
+    const replayBtn = document.getElementById("replayBtn");
+    const playBtn = document.getElementById("playBtn");
+    const toast = document.getElementById("toast");
 
-<script>
-  // bg hearts
-  const bgHearts = document.getElementById("bgHearts");
-  const heartChars = ["💗","💖","💞","💕","💘"];
-  function spawnBgHeart(){
-    const h = document.createElement("div");
-    h.className = "bg-heart";
-    h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-    h.style.left = (Math.random()*100) + "vw";
-    const dur = 10 + Math.random()*10;
-    h.style.animationDuration = dur + "s";
-    h.style.animationDelay = (-Math.random()*dur) + "s";
-    h.style.fontSize = (14 + Math.random()*18) + "px";
-    bgHearts.appendChild(h);
-    setTimeout(()=>h.remove(), dur*1000);
-  }
-  for(let i=0;i<14;i++) spawnBgHeart();
-  setInterval(spawnBgHeart, 900);
+    // ===== Utilities
+    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  const toast = document.getElementById("toast");
-  const yesBtn = document.getElementById("yesBtn");
-  const noBtn  = document.getElementById("noBtn");
-  const yesHeart = document.getElementById("yesHeart");
-  const audioEl = document.getElementById("audio");
+    function zoneRect(){ return btnZone.getBoundingClientRect(); }
 
-  const vinylArea = document.getElementById("vinylArea");
-  const vinylCase = document.getElementById("vinylCase");
-  const vinylLabel = document.getElementById("vinylLabel");
-  const vinylMini = document.getElementById("vinylMini");
-  const record = document.getElementById("record");
+    // Smooth movement state (no choppy teleport)
+    let noPos = { x: 0, y: 0 };
+    let target = { x: 0, y: 0 };
+    let animing = false;
 
-  const noTexts = [
-    "Wrong button 😌",
-    "Try again, love.",
-    "‘NO’ is running away maybe try ‘YES’?…",
-    "You still was able to click no wow I’m impressed",
-    "I think your finger slipped this time. It happens.",
-    "Plot twist: No decided to find its own valentine"
-  ];
-  let noCount = 0;
-  const NO_LIMIT = 6;
-  let dodgeEnabled = false;
+    function setTarget(x,y){
+      const zr = zoneRect();
+      const bw = noBtn.offsetWidth;
+      const bh = noBtn.offsetHeight;
 
-  // NO physics (screen space)
-  let noX = null, noY = null;
-  let vx = 0, vy = 0;
-  let rafId = null;
-  let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
+      const minX = 10;
+      const minY = 10;
+      const maxX = zr.width - bw - 10;
+      const maxY = zr.height - bh - 10;
 
-  function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+      target.x = clamp(x, minX, maxX);
+      target.y = clamp(y, minY, maxY);
 
-  function initNoFixedFromCurrent(){
-    const r = noBtn.getBoundingClientRect();
-    noX = r.left;
-    noY = r.top;
-    noBtn.classList.add("runaway");
-    noBtn.style.left = noX + "px";
-    noBtn.style.top  = noY + "px";
-  }
+      if (!animing) smoothStep();
+    }
 
-  function setNoPos(x, y){
-    const pad = 10; // lets it get close to edges
-    const w = noBtn.offsetWidth || 170;
-    const h = noBtn.offsetHeight || 56;
-    const maxX = window.innerWidth  - w - pad;
-    const maxY = window.innerHeight - h - pad;
-    noX = clamp(x, pad, maxX);
-    noY = clamp(y, pad, maxY);
-    noBtn.style.left = noX + "px";
-    noBtn.style.top  = noY + "px";
-  }
+    function smoothStep(){
+      animing = true;
 
-  function updateYesEffects(){
-    const scaleYes = 1 + (noCount * 0.14);
-    yesBtn.style.transform = `scale(${scaleYes})`;
-    const duration = Math.max(0.28, 1.2 - (noCount * 0.18));
-    yesHeart.style.animationDuration = duration + "s";
-  }
+      // ease toward target
+      const ease = 0.18; // smaller = slower/smoother
+      noPos.x += (target.x - noPos.x) * ease;
+      noPos.y += (target.y - noPos.y) * ease;
 
-  function updateNoEffects(){
-    // NO gets smaller each click
-    const scaleNo = Math.max(0.55, 1 - (noCount * 0.08));
-    noBtn.style.transform = `scale(${scaleNo})`;
-  }
+      // apply
+      noBtn.style.left = noPos.x + "px";
+      noBtn.style.top  = noPos.y + "px";
 
-  window.addEventListener("mousemove", (e)=>{
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-
-  function startRunaway(){
-    if (rafId) return;
-
-    function step(){
-      if (noBtn.classList.contains("hidden")){
-        rafId = null;
+      // stop when close
+      const dx = target.x - noPos.x;
+      const dy = target.y - noPos.y;
+      if (Math.hypot(dx,dy) < 0.6){
+        noPos.x = target.x;
+        noPos.y = target.y;
+        noBtn.style.left = noPos.x + "px";
+        noBtn.style.top  = noPos.y + "px";
+        animing = false;
         return;
       }
-      if (!dodgeEnabled){
-        rafId = requestAnimationFrame(step);
+      requestAnimationFrame(smoothStep);
+    }
+
+    function initNo(){
+      const zr = zoneRect();
+      const startX = zr.width * 0.66;
+      const startY = zr.height * 0.55;
+      noPos = { x: startX, y: startY };
+      target = { x: startX, y: startY };
+      noBtn.style.left = startX + "px";
+      noBtn.style.top  = startY + "px";
+    }
+
+    // ===== Cute background hearts (more variety)
+    const heartGlyphs = ["💗","💖","💘","💕","💞","❤️","🩷"];
+    function spawnBgHeart(){
+      const el = document.createElement("div");
+      el.className = "float-heart";
+      el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+
+      const x = Math.random()*100;                // vw
+      const s = 0.7 + Math.random()*0.9;          // scale
+      const drift = (-30 + Math.random()*60) + "vw";
+      const dur = 7 + Math.random()*7;            // seconds
+
+      el.style.setProperty("--x", x + "vw");
+      el.style.setProperty("--s", s.toFixed(2));
+      el.style.setProperty("--drift", drift);
+      el.style.animationDuration = dur + "s";
+
+      bg.appendChild(el);
+      setTimeout(() => el.remove(), dur*1000);
+    }
+
+    // Start a steady stream of hearts
+    setInterval(() => {
+      if (overlay.classList.contains("show")) return;
+      // spawn 1-2 each tick for a richer background
+      spawnBgHeart();
+      if (Math.random() < 0.35) spawnBgHeart();
+    }, 520);
+
+    // ===== Pop heart on interactions
+    function popAt(x,y){
+      const el = document.createElement("div");
+      el.className = "pop";
+      el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+      el.style.left = (x + (Math.random()*16-8)) + "px";
+      el.style.top  = (y + (Math.random()*16-8)) + "px";
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 950);
+    }
+
+    // ===== Confetti
+    function burstConfetti(){
+      const count = 120;
+      for (let i=0;i<count;i++){
+        const c = document.createElement("div");
+        c.className = "confetti";
+        c.style.left = (Math.random()*window.innerWidth) + "px";
+        c.style.animationDuration = (3 + Math.random()*2.5) + "s";
+        c.style.background = `hsl(${Math.random()*360}, 90%, 60%)`;
+        document.body.appendChild(c);
+        setTimeout(()=>c.remove(), 6500);
+      }
+    }
+
+    // ===== "No" logic:
+    // - It moves away when close, but slower and smoother.
+    // - Small chance she can "catch" it (click succeeds).
+    // - Clicking "No" triggers cute messages (never rejects).
+    let canBeCaught = false;
+    let catchWindowTimer = null;
+
+    const noMessages = [
+      "Nice try 😌💗",
+      "You’re really gonna press NO? 😂",
+      "That button is just for decoration, babe 💘",
+      "Mhm… you want me that bad huh 😏",
+      "Okay okay I see you trying 😭💕",
+      "Still my Valentine though 🌹",
+      "You’re adorable. Keep trying 😌💖"
+    ];
+
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toast.classList.remove("show"), 1200);
+    }
+
+    function openCatchWindow(){
+      // brief moment where click can land (so it feels catchable)
+      canBeCaught = true;
+      clearTimeout(catchWindowTimer);
+      catchWindowTimer = setTimeout(()=> { canBeCaught = false; }, 220); // 0.22s window
+    }
+
+    function evade(pointerX, pointerY){
+      const zr = zoneRect();
+      const bw = noBtn.offsetWidth;
+      const bh = noBtn.offsetHeight;
+
+      // pointer relative to zone
+      const px = pointerX - zr.left;
+      const py = pointerY - zr.top;
+
+      // choose a new target that isn't too far (so it looks smooth and catchable)
+      const maxJump = 160; // limit jump distance to avoid "teleport feel"
+      let rx = px + (Math.random()*2-1)*maxJump;
+      let ry = py + (Math.random()*2-1)*maxJump;
+
+      // also bias away from the pointer (push vector)
+      const vx = (noPos.x - px);
+      const vy = (noPos.y - py);
+      const len = Math.hypot(vx,vy) || 1;
+      rx += (vx/len) * 70;
+      ry += (vy/len) * 70;
+
+      setTarget(rx, ry);
+
+      // sometimes allow catch chance right after it moves
+      if (Math.random() < 0.22) openCatchWindow(); // 22% chance per evade
+    }
+
+    // Mouse proximity detection (gentler range)
+    document.addEventListener("mousemove", (e) => {
+      if (overlay.classList.contains("show")) return;
+      const r = noBtn.getBoundingClientRect();
+      const mx = e.clientX, my = e.clientY;
+      const dist = Math.hypot((r.left + r.width/2) - mx, (r.top + r.height/2) - my);
+
+      if (dist < 95){
+        // Smooth evade, not instant
+        evade(mx, my);
+        popAt(mx, my);
+      }
+    }, { passive:true });
+
+    // Touch support: if finger comes near, move
+    btnZone.addEventListener("touchmove", (e) => {
+      if (overlay.classList.contains("show")) return;
+      const t = e.touches && e.touches[0];
+      if (!t) return;
+      evade(t.clientX, t.clientY);
+    }, { passive:true });
+
+    // Clicking "No"
+    noBtn.addEventListener("click", (e) => {
+      const x = e.clientX || (e.touches && e.touches[0]?.clientX) || (window.innerWidth/2);
+      const y = e.clientY || (e.touches && e.touches[0]?.clientY) || (window.innerHeight/2);
+      popAt(x,y);
+
+      // If not in catch window, it slips away and shows a message
+      if (!canBeCaught){
+        showToast("Almost 😭💞");
+        evade(x,y);
         return;
       }
-      if (noX === null) initNoFixedFromCurrent();
 
-      // speed increases as she clicks NO
-      const MAX_SPEED = 14 + (noCount * 2.2);    // faster each click
-      const FRICTION  = 0.84;                    // smooth
-      const TRIGGER   = 210;                     // runs when cursor gets close
-      const BOOST     = 1.35 + (noCount * 0.08); // stronger push each click
+      // If caught: show a cute line, then still keep it playful
+      const msg = noMessages[Math.floor(Math.random()*noMessages.length)];
+      showToast(msg);
+      canBeCaught = false;
 
-      const w = noBtn.offsetWidth || 170;
-      const h = noBtn.offsetHeight || 56;
-      const bx = noX + w/2;
-      const by = noY + h/2;
+      // After being caught, move a little (so it doesn't stay easy)
+      setTimeout(()=> evade(x,y), 120);
+    });
 
-      const dx = bx - mouseX;
-      const dy = by - mouseY;
-      const dist = Math.max(1, Math.hypot(dx, dy));
+    // ===== Yes flow
+    yesBtn.addEventListener("click", (e) => {
+      const x = e.clientX || (window.innerWidth/2);
+      const y = e.clientY || (window.innerHeight/2);
+      popAt(x,y);
 
-      if (dist < TRIGGER){
-        const strength = (TRIGGER - dist) / TRIGGER;
-        const ux = dx / dist;
-        const uy = dy / dist;
-        vx += ux * (MAX_SPEED * strength * BOOST);
-        vy += uy * (MAX_SPEED * strength * BOOST);
+      overlay.classList.add("show");
+      burstConfetti();
+    });
+
+    replayBtn.addEventListener("click", () => {
+      overlay.classList.remove("show");
+    });
+
+    // ===== "Play me" (built-in tiny melody using Web Audio)
+    let audioCtx = null;
+    function playLoveMelody(){
+      try{
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const ctx = audioCtx;
+
+        const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25]; // C5 D5 E5 G5 E5 D5 C5
+        const now = ctx.currentTime;
+
+        notes.forEach((freq, i) => {
+          const o = ctx.createOscillator();
+          const g = ctx.createGain();
+          o.type = "sine";
+          o.frequency.value = freq;
+
+          g.gain.setValueAtTime(0.0001, now + i*0.18);
+          g.gain.exponentialRampToValueAtTime(0.18, now + i*0.18 + 0.03);
+          g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.18 + 0.16);
+
+          o.connect(g);
+          g.connect(ctx.destination);
+
+          o.start(now + i*0.18);
+          o.stop(now + i*0.18 + 0.18);
+        });
+      } catch (err){
+        // If audio blocked, just ignore
       }
-
-      vx *= FRICTION;
-      vy *= FRICTION;
-
-      const vLen = Math.max(1, Math.hypot(vx, vy));
-      if (vLen > MAX_SPEED){
-        vx = (vx / vLen) * MAX_SPEED;
-        vy = (vy / vLen) * MAX_SPEED;
-      }
-
-      let nextX = noX + vx;
-      let nextY = noY + vy;
-
-      // keep on screen & bounce
-      const pad = 10;
-      const maxX = window.innerWidth  - w - pad;
-      const maxY = window.innerHeight - h - pad;
-      if (nextX < pad || nextX > maxX) { vx *= -0.65; nextX = clamp(nextX, pad, maxX); }
-      if (nextY < pad || nextY > maxY) { vy *= -0.65; nextY = clamp(nextY, pad, maxY); }
-
-      setNoPos(nextX, nextY);
-
-      rafId = requestAnimationFrame(step);
-    }
-    rafId = requestAnimationFrame(step);
-  }
-
-  // Start dodging only when she "targets" NO (like first versions)
-  noBtn.addEventListener("mouseenter", ()=>{
-    if (dodgeEnabled) return;
-    dodgeEnabled = true;
-    initNoFixedFromCurrent();
-    startRunaway();
-  });
-
-  noBtn.addEventListener("click", ()=>{
-    noCount++;
-    toast.textContent = noTexts[Math.min(noCount-1, noTexts.length-1)];
-    updateYesEffects();
-    updateNoEffects();
-
-    // enable dodge on first click too (mobile has no hover)
-    if (!dodgeEnabled){
-      dodgeEnabled = true;
-      initNoFixedFromCurrent();
-      startRunaway();
     }
 
-    // after limit, hide no
-    if (noCount >= NO_LIMIT){
-      noBtn.classList.add("hidden");
-    }
-  });
+    playBtn.addEventListener("click", () => {
+      playLoveMelody();
+      showToast("Playing 😌🎶");
+    });
 
-  function burstHeartsFrom(el){
-    const rect = el.getBoundingClientRect();
-    const cx = rect.left + rect.width/2;
-    const cy = rect.top + rect.height/2;
-    for(let i=0;i<10;i++){
-      const h = document.createElement("div");
-      h.className = "pop-heart";
-      h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-      h.style.left = (cx + (Math.random()*120-60)) + "px";
-      h.style.top  = (cy + (Math.random()*30)) + "px";
-      document.body.appendChild(h);
-      setTimeout(()=>h.remove(), 1350);
-    }
-  }
-
-  yesBtn.addEventListener("click", ()=>{
-    burstHeartsFrom(yesBtn);
-    toast.textContent = "Yessss 😌💗 Smart choice. I knew you were my Valentine.";
-    yesHeart.style.animation = "none";
-    vinylArea.classList.add("show");   // appears like the first vibe (no auto-scroll)
-  });
-
-  // Vinyl click: remove prompt, open, slide record, spin, notes, play
-  let notesTimer = null;
-  function startNotes(){
-    if (notesTimer) return;
-    notesTimer = setInterval(()=>{
-      const note = document.createElement("div");
-      note.className = "note";
-      note.textContent = ["♪","♫","♬","♩"][Math.floor(Math.random()*4)];
-      const r = vinylCase.getBoundingClientRect();
-      note.style.left = (r.left + r.width/2 + (Math.random()*60-30)) + "px";
-      note.style.top  = (r.top + 35 + (Math.random()*30)) + "px";
-      note.style.setProperty("--dx", (Math.random()*100-50) + "px");
-      document.body.appendChild(note);
-      setTimeout(()=>note.remove(), 2200);
-    }, 240);
-  }
-
-  vinylCase.addEventListener("click", async ()=>{
-    vinylLabel.classList.add("hidden");
-    vinylMini.classList.add("hidden");
-    vinylCase.classList.add("open");
-    record.classList.add("spin");
-    startNotes();
-    try{ await audioEl.play(); } catch(e){ /* ignore */ }
-  });
-
-  window.addEventListener("resize", ()=>{
-    if (!dodgeEnabled || noX === null) return;
-    setNoPos(noX, noY);
-  });
-</script>
+    // ===== Init / keep button inside on resize
+    window.addEventListener("load", () => initNo());
+    window.addEventListener("resize", () => initNo());
+  </script>
 </body>
 </html>
