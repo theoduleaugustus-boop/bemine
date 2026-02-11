@@ -6,13 +6,9 @@
   <title>💘 Valentine?</title>
   <style>
     :root{
-      --bg1:#fff0f6;
-      --bg2:#ffe0ee;
-      --ink:#2b1b22;
-      --pink:#ff2f78;
-      --pink2:#ff6fa1;
-      --card:#ffffffcc;
-      --shadow: 0 18px 55px rgba(0,0,0,.12);
+      --bg1:#fff0f6; --bg2:#ffe0ee; --ink:#2b1b22;
+      --pink:#ff2f78; --pink2:#ff6fa1;
+      --card:#ffffffcc; --shadow: 0 18px 55px rgba(0,0,0,.12);
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;color:var(--ink)}
@@ -24,8 +20,8 @@
         linear-gradient(135deg, var(--bg1), #fff);
     }
 
-    /* soft floating background hearts */
-    #bgHearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:.30;z-index:0}
+    /* soft floating bg hearts */
+    #bgHearts{position:fixed;inset:0;pointer-events:none;overflow:hidden;opacity:.28;z-index:0}
     .bg-heart{position:absolute;bottom:-10vh;font-size:18px;animation:floatUp linear infinite;opacity:.9}
     @keyframes floatUp{
       0%{transform:translateY(0) translateX(0) rotate(0deg);opacity:0}
@@ -49,11 +45,12 @@
       display:inline-flex;align-items:center;gap:10px;
       padding:10px 14px;background:#fff;border-radius:999px;
       box-shadow:0 10px 30px rgba(0,0,0,.08);
-      font-weight:900;
+      font-weight:1000;
     }
     h1{margin:14px 0 8px;font-size:clamp(22px,3.2vw,34px);letter-spacing:-.02em}
     p{margin:0 0 16px;opacity:.85}
 
+    /* toast sits above row, row pushed down so it never overlays buttons */
     .toast{
       min-height:40px;
       margin:12px 0 22px;
@@ -62,7 +59,6 @@
       z-index:1;
       font-weight:900;
     }
-
     .row{
       display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;
       position:relative; z-index:2; padding-top:8px;
@@ -101,28 +97,12 @@
       50%{transform:scale(1.25)}
     }
 
-    /* No button goes runaway (always clickable) */
+    /* NO runaway */
     #noBtn.runaway{
       position:fixed;
       z-index:9999;
       pointer-events:auto;
-    }
-
-    /* pop-up bubbles for NO text */
-    .pop{
-      position:fixed;z-index:9998;background:#fff;
-      padding:10px 12px;border-radius:14px;
-      box-shadow:0 14px 36px rgba(0,0,0,.14);
-      font-weight:900;font-size:14px;
-      animation:popInOut 1.35s ease forwards;
-      pointer-events:none;
-      max-width:260px;
-    }
-    @keyframes popInOut{
-      0%{transform:translateY(8px) scale(.95);opacity:0}
-      15%{transform:translateY(0) scale(1);opacity:1}
-      80%{opacity:1}
-      100%{transform:translateY(-10px) scale(.98);opacity:0}
+      transition:left .12s ease, top .12s ease;
     }
 
     /* hearts burst on YES */
@@ -141,8 +121,8 @@
     #vinylCase{
       position:fixed;
       z-index:9000;
-      width:170px;
-      height:130px;
+      width:190px;
+      height:132px;
       border-radius:18px;
       background:linear-gradient(135deg,#fff,#ffe6f1);
       border:2px solid rgba(0,0,0,.08);
@@ -170,15 +150,11 @@
       opacity:.8;
       font-weight:800;
     }
-
-    /* case “opens” */
     #vinylCase.open{
-      width:240px;
-      height:150px;
+      width:255px;
+      height:155px;
       transform:rotate(0deg);
     }
-
-    /* the “record” */
     #record{
       width:76px;height:76px;border-radius:50%;
       background:
@@ -186,7 +162,7 @@
       box-shadow: inset 0 0 0 4px rgba(255,255,255,.06);
       position:absolute;
       right:18px;
-      top:38px;
+      top:44px;
       opacity:0;
       transform:translateX(-14px) scale(.95);
       transition:opacity .25s ease, transform .25s ease;
@@ -198,21 +174,17 @@
       background:linear-gradient(90deg,var(--pink),var(--pink2));
       box-shadow:0 0 0 3px rgba(255,255,255,.15);
     }
-
     #vinylCase.open #record{
       opacity:1;
       transform:translateX(0) scale(1);
     }
-
-    .spin{
-      animation:spin 1.2s linear infinite;
-    }
+    .spin{animation:spin 1.2s linear infinite;}
     @keyframes spin{
       from{transform:translateX(0) scale(1) rotate(0deg)}
       to{transform:translateX(0) scale(1) rotate(360deg)}
     }
 
-    /* music notes that float forever while playing */
+    /* music notes */
     .note{
       position:fixed;
       z-index:9200;
@@ -246,7 +218,7 @@
     </div>
   </div>
 
-  <!-- Put your audio file beside this HTML and name it song.m4a -->
+  <!-- Put your audio file beside this HTML on GitHub Pages and name it song.m4a -->
   <audio id="audio" preload="auto">
     <source src="song.m4a" type="audio/mp4">
   </audio>
@@ -279,7 +251,7 @@
   const yesHeart = document.getElementById("yesHeart");
   const audioEl = document.getElementById("audio");
 
-  // Your NO texts in your exact order:
+  // NO texts (exact order you listed)
   const noTexts = [
     "Wrong button 😌",
     "Try again, love.",
@@ -294,52 +266,68 @@
 
   function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 
-  function popText(msg){
-    const b = document.createElement("div");
-    b.className = "pop";
-    b.textContent = msg;
-
-    const pad = 16;
-    const x = pad + Math.random()*(window.innerWidth - 280);
-    const y = pad + Math.random()*(window.innerHeight - 160);
-
-    b.style.left = clamp(x, pad, window.innerWidth - 260) + "px";
-    b.style.top  = clamp(y, pad, window.innerHeight - 90) + "px";
-    document.body.appendChild(b);
-    setTimeout(()=>b.remove(), 1350);
-  }
-
-  function moveNo(){
-    noBtn.classList.add("runaway");
-    const pad = 18;
+  // Keep NO fully on-screen, always clickable
+  function placeNoAt(x, y){
+    const pad = 12;
     const w = noBtn.offsetWidth || 170;
     const h = noBtn.offsetHeight || 56;
-
     const maxX = window.innerWidth  - w - pad;
     const maxY = window.innerHeight - h - pad;
-
-    const x = pad + Math.random() * clamp(maxX - pad, 40, maxX);
-    const y = pad + Math.random() * clamp(maxY - pad, 80, maxY);
-
-    noBtn.style.left = x + "px";
-    noBtn.style.top  = y + "px";
+    const cx = clamp(x, pad, maxX);
+    const cy = clamp(y, pad, maxY);
+    noBtn.classList.add("runaway");
+    noBtn.style.left = cx + "px";
+    noBtn.style.top  = cy + "px";
   }
 
-  function growYes(){
+  // Run away from pointer position
+  function runAwayFromPointer(clientX, clientY){
+    const r = noBtn.getBoundingClientRect();
+    const bx = r.left + r.width/2;
+    const by = r.top  + r.height/2;
+    const dx = bx - clientX;
+    const dy = by - clientY;
+    const len = Math.max(1, Math.hypot(dx,dy));
+    const ux = dx / len;
+    const uy = dy / len;
+    const jump = 160 + Math.random()*120;
+    const targetX = r.left + ux * jump + (Math.random()*40 - 20);
+    const targetY = r.top  + uy * jump + (Math.random()*40 - 20);
+    placeNoAt(targetX, targetY);
+  }
+
+  // YES grows + heart beats faster
+  function updateYesEffects(){
     const scale = 1 + (noCount * 0.14);
     yesBtn.style.transform = `scale(${scale})`;
-  }
-
-  function speedUpHeart(){
-    const duration = Math.max(0.35, 1.2 - (noCount * 0.15)); // 1.2s -> 0.35s
+    const duration = Math.max(0.35, 1.2 - (noCount * 0.15));
     yesHeart.style.animationDuration = duration + "s";
   }
 
+  // Desktop: NO runs away from cursor
+  noBtn.addEventListener("mouseenter", (e) => {
+    runAwayFromPointer(e.clientX, e.clientY);
+  });
+
+  // Mobile/All: NO click logic
+  noBtn.addEventListener("click", (e) => {
+    noCount++;
+    toast.textContent = noTexts[Math.min(noCount-1, noTexts.length-1)];
+    updateYesEffects();
+
+    if(noCount >= NO_LIMIT){
+      noBtn.classList.add("hidden");
+      return;
+    }
+    // run away from tap point (or center fallback)
+    runAwayFromPointer(e.clientX || (window.innerWidth/2), e.clientY || (window.innerHeight/2));
+  });
+
+  // Hearts burst on YES
   function burstHeartsFrom(el){
     const rect = el.getBoundingClientRect();
     const cx = rect.left + rect.width/2;
     const cy = rect.top + rect.height/2;
-
     for(let i=0;i<10;i++){
       const h = document.createElement("div");
       h.className = "pop-heart";
@@ -353,42 +341,29 @@
     }
   }
 
-  // ---------- NO behavior ----------
-  noBtn.addEventListener("click", () => {
-    noCount++;
-
-    toast.textContent = noTexts[Math.min(noCount-1, noTexts.length-1)];
-    popText(noTexts[Math.min(noCount-1, noTexts.length-1)]);
-
-    growYes();
-    speedUpHeart();
-
-    if(noCount >= NO_LIMIT){
-      noBtn.classList.add("hidden");
-      return;
-    }
-    moveNo();
-  });
-
-  window.addEventListener("resize", () => {
-    if(noBtn.classList.contains("runaway") && !noBtn.classList.contains("hidden")){
-      moveNo();
-    }
-  });
-
-  // ---------- YES behavior ----------
-  yesBtn.addEventListener("click", () => {
-    burstHeartsFrom(yesBtn);
-    toast.textContent = "Yessss 😌💗 Smart choice. I knew you were my Valentine.";
-    // stop the heart beat once she clicks YES (optional)
-    yesHeart.style.animation = "none";
-  });
-
-  // ---------- Vinyl surprise ----------
-  // Creates a cute “cartoon” vinyl case somewhere random.
+  // ---------- Vinyl surprise (spawn ONLY after YES) ----------
   let notesTimer = null;
 
+  function startNotes(vc){
+    if (notesTimer) return;
+    notesTimer = setInterval(() => {
+      const note = document.createElement("div");
+      note.className = "note";
+      note.textContent = ["♪","♫","♬","♩"][Math.floor(Math.random()*4)];
+      const r = vc.getBoundingClientRect();
+      const nx = r.left + r.width/2 + (Math.random()*60 - 30);
+      const ny = r.top + 30 + (Math.random()*30);
+      note.style.left = nx + "px";
+      note.style.top  = ny + "px";
+      note.style.setProperty("--dx", (Math.random()*100 - 50) + "px");
+      document.body.appendChild(note);
+      setTimeout(()=>note.remove(), 2200);
+    }, 260);
+  }
+
   function placeVinylCase(){
+    if (document.getElementById("vinylCase")) return;
+
     const vc = document.createElement("div");
     vc.id = "vinylCase";
     vc.innerHTML = `
@@ -398,10 +373,9 @@
     `;
 
     const pad = 18;
-    const w = 170, h = 130;
+    const w = 190, h = 132;
     const x = pad + Math.random()*(window.innerWidth - w - pad*2);
     const y = pad + Math.random()*(window.innerHeight - h - pad*2);
-
     vc.style.left = clamp(x, pad, window.innerWidth - w - pad) + "px";
     vc.style.top  = clamp(y, pad, window.innerHeight - h - pad) + "px";
 
@@ -409,47 +383,34 @@
 
     const record = vc.querySelector("#record");
 
-    async function startMusic(){
-      // iPhone/Safari requires user gesture — this click counts.
-      try{
-        await audioEl.play();
-      }catch(e){
-        // If it fails, keep UI open but don’t freeze the page.
-      }
-    }
-
-    function startNotes(){
-      if(notesTimer) return;
-      notesTimer = setInterval(() => {
-        const note = document.createElement("div");
-        note.className = "note";
-        note.textContent = ["♪","♫","♬","♩"][Math.floor(Math.random()*4)];
-
-        const r = vc.getBoundingClientRect();
-        const nx = r.left + r.width/2 + (Math.random()*60 - 30);
-        const ny = r.top + 30 + (Math.random()*30);
-        note.style.left = nx + "px";
-        note.style.top  = ny + "px";
-        note.style.setProperty("--dx", (Math.random()*100 - 50) + "px");
-
-        document.body.appendChild(note);
-        setTimeout(()=>note.remove(), 2200);
-      }, 260);
-    }
-
     vc.addEventListener("click", async () => {
       vc.classList.add("open");
-      // reveal + spin record
       record.classList.add("spin");
-      // start notes and music
-      startNotes();
-      await startMusic();
-      toast.textContent = "Okayyy… now we’re vibing 😌🎶";
+      startNotes(vc);
+
+      try{
+        await audioEl.play(); // user click = allowed on Safari/iPhone
+        toast.textContent = "Okayyy… now we’re vibing 😌🎶";
+      }catch(e){
+        toast.textContent = "Tap again for the surprise 😭🎶";
+      }
     });
   }
 
-  // Spawn it after a short delay so it feels like a “surprise”
-  setTimeout(placeVinylCase, 1200);
+  yesBtn.addEventListener("click", () => {
+    burstHeartsFrom(yesBtn);
+    toast.textContent = "Yessss 😌💗 Smart choice. I knew you were my Valentine.";
+    yesHeart.style.animation = "none";
+    placeVinylCase(); // 👈 spawn vinyl after YES
+  });
+
+  // keep NO in bounds on resize/rotation
+  window.addEventListener("resize", () => {
+    if (noBtn.classList.contains("runaway") && !noBtn.classList.contains("hidden")){
+      const r = noBtn.getBoundingClientRect();
+      placeNoAt(r.left, r.top);
+    }
+  });
 </script>
 </body>
 </html>
