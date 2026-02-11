@@ -119,11 +119,11 @@
     const noTexts = [
       "Wrong button 😌",
       "Try again, sweetheart.",
-      "That ‘No’ is looking dangerous…",
+      "‘No’ is running away try 'YES'?…",
       "Be serious 😂",
       "I’m gonna pretend I didn’t see that.",
       "Your finger slipped. It happens.",
-      "Plot twist: NO is not an option."
+      "Plot twist: NO decided to find its own love."
     ];
 
     let noCount = 0;
@@ -184,7 +184,7 @@
       // after enough NOs, remove it
       if (noCount >= 6){
         noBtn.remove();
-        toast.textContent = `${HER_NAME}… you just made the YES button gain a few pounds... 😌💘`;
+        toast.textContent = `Babe… you just made the YES button gain a few pounds... 😌💘`;
       }
     });
 
@@ -195,7 +195,7 @@
 
     yesBtn.addEventListener("click", () => {
       ensureAudioStarts();
-      toast.textContent = `YAY 😭💗 Okay ${HER_NAME}, that’s a YES. I’m claiming my Valentine.`;
+      toast.textContent = `YAY 😭💗 Okay ${HER_NAME}, that’s a YES. I’m claiming that your my Valentine.`;
       yesBtn.style.filter = "brightness(1.02)";
     });
   </script>
