@@ -87,7 +87,7 @@
     }
 
     .card{
-      width:min(640px, 100%);
+      width:min(680px, 100%);
       background:var(--card);
       border:1px solid rgba(255,79,163,.20);
       border-radius:26px;
@@ -111,6 +111,12 @@
       margin:6px 0 6px;
       font-size: clamp(22px, 4.6vw, 36px);
       letter-spacing:.2px;
+    }
+    .question{
+      margin:6px 0 10px;
+      font-weight: 950;
+      font-size: clamp(20px, 4.2vw, 30px);
+      color: var(--text);
     }
     .subtitle{
       margin:0 0 16px;
@@ -148,12 +154,15 @@
       background: linear-gradient(135deg, var(--yes1), var(--yes2));
       color:#fff;
       transform: scale(var(--yesScale, 1));
+      white-space:nowrap;
     }
     #yesBtn:hover{ filter: brightness(1.03); }
 
     /* Heart beat (only the emoji) */
     .yesHeart{
       display:inline-block;
+      width: 1.2em;         /* prevents text wiggle */
+      text-align:center;
       margin-left:6px;
       transform-origin:center;
       animation: beat var(--beatSpeed, 1.8s) ease-in-out infinite;
@@ -171,11 +180,12 @@
       box-shadow: 0 14px 28px rgba(255,107,138,.22);
       will-change: transform;
       opacity: var(--noOpacity, 1);
+      white-space:nowrap;
     }
     #noBtn:hover{ filter: brightness(1.02); }
 
     .hint{
-      margin-top:8px;
+      margin-top:10px;
       font-size:12px;
       color: rgba(107,58,90,.78);
     }
@@ -235,7 +245,7 @@
     .overlay.show{ display:grid; }
 
     .success{
-      width:min(740px, 100%);
+      width:min(760px, 100%);
       border:1px solid rgba(255,79,163,.22);
       border-radius:26px;
       background:#ffffffd8;
@@ -287,15 +297,23 @@
       to{ transform: translateY(120vh) rotate(720deg); opacity:0.95; }
     }
 
-    /* ===== Vinyl-in-sleeve (ONLY shows after YES overlay) ===== */
+    /* ===== Surprise vinyl (appears only after pressing "Press me") ===== */
+    .surpriseWrap{
+      display:none;
+      margin: 10px auto 14px;
+      width:min(560px, 100%);
+    }
+    .surpriseWrap.show{ display:block; }
+
     .vinylScene{
       width:min(520px, 100%);
-      margin: 10px auto 14px;
+      margin: 10px auto 6px;
       position:relative;
       height:220px;
       display:grid;
       place-items:center;
     }
+
     .sleeve{
       width:260px;
       height:190px;
@@ -320,11 +338,11 @@
     .sleeveLabel{
       position:absolute;
       left:16px; bottom:14px;
-      font-weight:900;
+      font-weight:950;
       color: rgba(107,58,90,.85);
       font-size:14px;
       letter-spacing:.2px;
-      background: rgba(255,255,255,.55);
+      background: rgba(255,255,255,.62);
       border:1px solid rgba(255,79,163,.18);
       padding:8px 10px;
       border-radius:999px;
@@ -354,14 +372,17 @@
       opacity:.85;
     }
 
-    .overlay.show .record{
+    /* Trigger animations when surpriseWrap is shown */
+    .surpriseWrap.show .record{
       animation: slideOut .85s ease forwards, spin 2.4s linear infinite .85s;
     }
     @keyframes slideOut{
       from{ opacity:0; transform: translate(-50%,-50%) translateX(-18px) translateY(-2px); }
       to{ opacity:1; transform: translate(-50%,-50%) translateX(92px) translateY(-2px); }
     }
-    @keyframes spin { to { transform: translate(-50%,-50%) translateX(92px) translateY(-2px) rotate(360deg); } }
+    @keyframes spin {
+      to { transform: translate(-50%,-50%) translateX(92px) translateY(-2px) rotate(360deg); }
+    }
 
     .note{
       position:absolute;
@@ -369,7 +390,7 @@
       opacity:0;
       filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
     }
-    .overlay.show .note{
+    .surpriseWrap.show .note{
       animation: notesFloat 2.4s ease-in-out infinite;
       opacity:1;
     }
@@ -377,6 +398,12 @@
       0%{ transform: translate(0,0) rotate(0deg); }
       50%{ transform: translate(var(--dx), var(--dy)) rotate(8deg); }
       100%{ transform: translate(0,0) rotate(0deg); }
+    }
+
+    .tinyNote{
+      margin-top:6px;
+      font-size:12px;
+      color: rgba(107,58,90,.75);
     }
 
     @media (max-width:420px){
@@ -397,6 +424,7 @@
       <div class="toast" id="toast">🙂</div>
 
       <h1>To the love of my life Sherkima 💗</h1>
+      <div class="question">Will you be my Valentine? 💘</div>
       <p class="subtitle">
         I promise this isn’t a trick question… unless you press No 😏💘
       </p>
@@ -406,30 +434,34 @@
         <button id="noBtn">No 🥺</button>
       </div>
 
-      <div class="hint">Try “No” if you want… it’s cute either way. 💘</div>
+      <div class="hint"><b>Tip:</b> Try pressing “No” 👀</div>
     </div>
   </div>
 
   <div class="overlay" id="overlay">
     <div class="success">
-      <h2>You said YESSS 💖</h2>
-      <p>I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹</p>
-
-      <div class="vinylScene" aria-hidden="true">
-        <div class="sleeve">
-          <div class="sleeveLabel">Sherkima’s Valentine 💞</div>
-        </div>
-        <div class="record"></div>
-
-        <div class="note" style="--dx:18px; --dy:-22px; left: calc(50% + 150px); top: 54px;">🎵</div>
-        <div class="note" style="--dx:-18px; --dy:-18px; left: calc(50% + 120px); top: 22px;">🎶</div>
-        <div class="note" style="--dx:22px; --dy:16px; left: calc(50% + 172px); top: 110px;">🎼</div>
-        <div class="note" style="--dx:-14px; --dy:20px; left: calc(50% + 130px); top: 138px;">🎵</div>
-      </div>
+      <h2 id="yesTitle">You said YESSS 💖</h2>
+      <p id="yesLine">I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹</p>
 
       <div class="actions">
-        <button class="btn3" id="playBtn">Play me ▶️</button>
+        <button class="btn3" id="surpriseBtn">Press me 😌💝</button>
         <button class="btn2" id="replayBtn">Replay 🔁</button>
+      </div>
+
+      <!-- Surprise area (hidden until "Press me") -->
+      <div class="surpriseWrap" id="surpriseWrap">
+        <div class="vinylScene" aria-hidden="true">
+          <div class="sleeve">
+            <div class="sleeveLabel">Our song 💞</div>
+          </div>
+          <div class="record"></div>
+
+          <div class="note" style="--dx:18px; --dy:-22px; left: calc(50% + 150px); top: 54px;">🎵</div>
+          <div class="note" style="--dx:-18px; --dy:-18px; left: calc(50% + 120px); top: 22px;">🎶</div>
+          <div class="note" style="--dx:22px; --dy:16px; left: calc(50% + 172px); top: 110px;">🎼</div>
+          <div class="note" style="--dx:-14px; --dy:20px; left: calc(50% + 130px); top: 138px;">🎵</div>
+        </div>
+        <div class="tinyNote">Add your real song later with an &lt;audio&gt; tag 😌🎶</div>
       </div>
     </div>
   </div>
@@ -441,8 +473,11 @@
     const btnZone = document.getElementById("btnZone");
     const overlay = document.getElementById("overlay");
     const replayBtn = document.getElementById("replayBtn");
-    const playBtn = document.getElementById("playBtn");
+    const surpriseBtn = document.getElementById("surpriseBtn");
+    const surpriseWrap = document.getElementById("surpriseWrap");
     const toast = document.getElementById("toast");
+    const yesTitle = document.getElementById("yesTitle");
+    const yesLine = document.getElementById("yesLine");
 
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
     function zoneRect(){ return btnZone.getBoundingClientRect(); }
@@ -577,7 +612,7 @@
       noBtn.style.setProperty("--noOpacity", op.toFixed(2));
     }
 
-    // Place NO next to YES (reliable: offsetLeft/Top inside same container)
+    // Place NO next to YES (reliable)
     function placeNoNextToYes(){
       const zr = zoneRect();
       const yesX = yesBtn.offsetLeft;
@@ -660,11 +695,10 @@
 
       popAt(t.clientX, t.clientY);
       evade(t.clientX, t.clientY);
-
       e.preventDefault();
     }, { passive:false });
 
-    // Touch move (keeps it playful)
+    // Touch move
     btnZone.addEventListener("touchmove", (e) => {
       if (overlay.classList.contains("show")) return;
       if (noPresses >= 4) return;
@@ -710,64 +744,40 @@
       setTimeout(() => evade(x,y), 120);
     });
 
-    // YES click
+    // YES click (mentions first try if she never pressed No)
     yesBtn.addEventListener("click", (e) => {
       popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
+
       overlay.classList.add("show");
       burstConfetti();
+
+      // Hide surprise until button pressed
+      surpriseWrap.classList.remove("show");
+
+      if (noPresses === 0){
+        yesTitle.textContent = "Awww you pressed it on the first try 😭💖";
+        yesLine.textContent = "That was too easy… but I’m not complaining 😌🌹";
+      } else {
+        yesTitle.textContent = "You said YESSS 💖";
+        yesLine.textContent = "I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹";
+      }
+    });
+
+    // Surprise button: reveals vinyl case + vinyl + notes
+    surpriseBtn.addEventListener("click", () => {
+      surpriseWrap.classList.add("show");
+      showToast("Okayyy… here’s the surprise 😌🎶");
     });
 
     replayBtn.addEventListener("click", () => {
       overlay.classList.remove("show");
+
       noPresses = 0;
       yesBtn.style.setProperty("--yesScale", "1");
       noBtn.style.setProperty("--noOpacity", "1");
       noBtn.style.opacity = "1";
       noBtn.style.pointerEvents = "auto";
+
       updateHeartBeat();
-      setTimeout(placeNoNextToYes, 0);
-    });
-
-    // Play me placeholder
-    let audioCtx = null;
-    function playLoveMelody(){
-      try{
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const ctx = audioCtx;
-        const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25];
-        const now = ctx.currentTime;
-
-        notes.forEach((freq, i) => {
-          const o = ctx.createOscillator();
-          const g = ctx.createGain();
-          o.type = "sine";
-          o.frequency.value = freq;
-
-          g.gain.setValueAtTime(0.0001, now + i*0.18);
-          g.gain.exponentialRampToValueAtTime(0.18, now + i*0.18 + 0.03);
-          g.gain.exponentialRampToValueAtTime(0.0001, now + i*0.18 + 0.16);
-
-          o.connect(g);
-          g.connect(ctx.destination);
-          o.start(now + i*0.18);
-          o.stop(now + i*0.18 + 0.18);
-        });
-      } catch (err){}
-    }
-
-    playBtn.addEventListener("click", () => {
-      playLoveMelody();
-      showToast("Playing 😌🎶");
-    });
-
-    // Init
-    window.addEventListener("load", () => {
-      updateHeartBeat();
-      setTimeout(placeNoNextToYes, 0);
-    });
-    window.addEventListener("resize", () => {
-      setTimeout(placeNoNextToYes, 0);
-    });
-  </script>
-</body>
-</html>
+      surpriseWrap.classList.remove("show");
+      setTimeout(placeNoNextToYes,
