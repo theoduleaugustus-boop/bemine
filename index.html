@@ -30,7 +30,6 @@
       100%{transform:translateY(-120vh) translateX(20px) rotate(18deg);opacity:0}
     }
 
-    /* sections */
     .section{
       min-height:100vh;
       display:flex;
@@ -69,9 +68,26 @@
       z-index:1;
       font-weight:900;
     }
+
     .row{
-      display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;
-      position:relative; z-index:2; padding-top:8px;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      align-items:center;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:2;
+      padding-top:8px;
+      /* IMPORTANT: keep NO inside this box */
+      width: fit-content;
+      margin: 0 auto;
+    }
+    /* when dodging starts, create a “play area” inside the row */
+    .row.dodge{
+      width: min(520px, 92vw);
+      height: 92px;
+      justify-content:center;
+      align-items:center;
     }
 
     button{
@@ -86,12 +102,15 @@
       background:linear-gradient(90deg,var(--pink),var(--pink2));
       color:#fff;
       transform-origin:center bottom;
+      position:relative;
+      z-index:2;
     }
     #noBtn{
       background:#fff;
       border:1px solid rgba(0,0,0,.10);
       color:#222;
       position:relative;
+      z-index:1;
     }
     button:active{transform:scale(.98)}
     .hidden{opacity:0;pointer-events:none}
@@ -107,10 +126,10 @@
       50%{transform:scale(1.25)}
     }
 
-    /* NO runaway (moved by JS; no transitions so it doesn’t “teleport”) */
+    /* NO stays INSIDE row when dodging */
     #noBtn.runaway{
-      position:fixed;
-      z-index:9999;
+      position:absolute;     /* not fixed */
+      z-index:5;
       pointer-events:auto;
     }
 
@@ -172,56 +191,36 @@
       font-weight:800;
     }
 
-    /* “hinge” open effect */
     #lid{
-      position:absolute;
-      left:0; top:0;
-      width:100%; height:100%;
+      position:absolute;left:0;top:0;width:100%;height:100%;
       transform-origin:left center;
-      background:linear-gradient(135deg, rgba(255,255,255,.0), rgba(255,255,255,.0));
       pointer-events:none;
     }
-    #vinylCase.open #lid{
-      animation: lidOpen .35s ease forwards;
-    }
-    @keyframes lidOpen{
-      from{ transform: rotateY(0deg); }
-      to{ transform: rotateY(-25deg); }
-    }
+    #vinylCase.open #lid{ animation: lidOpen .35s ease forwards; }
+    @keyframes lidOpen{ from{transform:rotateY(0deg)} to{transform:rotateY(-25deg)} }
 
-    /* record slides out + spins */
     #record{
       width:86px;height:86px;border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, #000 0 18%, #222 18% 34%, #111 34% 52%, #000 52% 100%);
+      background: radial-gradient(circle at 50% 50%, #000 0 18%, #222 18% 34%, #111 34% 52%, #000 52% 100%);
       box-shadow: inset 0 0 0 4px rgba(255,255,255,.06);
-      position:absolute;
-      right:18px;
-      top:38px;
+      position:absolute; right:18px; top:38px;
       opacity:0;
       transform: translateX(-24px) scale(.95);
       transition: opacity .25s ease, transform .35s ease;
     }
     #record::after{
       content:"";
-      position:absolute;inset:34px;
-      border-radius:50%;
+      position:absolute; inset:34px; border-radius:50%;
       background:linear-gradient(90deg,var(--pink),var(--pink2));
       box-shadow:0 0 0 3px rgba(255,255,255,.15);
     }
-    #vinylCase.open #record{
-      opacity:1;
-      transform: translateX(0) scale(1);
-    }
-    #record.spin{
-      animation: spin 1.1s linear infinite;
-    }
+    #vinylCase.open #record{ opacity:1; transform: translateX(0) scale(1); }
+    #record.spin{ animation: spin 1.05s linear infinite; }
     @keyframes spin{
       from{ transform: translateX(0) scale(1) rotate(0deg); }
       to{ transform: translateX(0) scale(1) rotate(360deg); }
     }
 
-    /* music notes while playing */
     .note{
       position:fixed;
       z-index:9200;
@@ -256,61 +255,55 @@
     </div>
   </section>
 
-  <!-- PAGE 2 (VINYL) -->
+  <!-- PAGE 2 -->
   <section class="section" id="page2">
     <div class="vinylWrap">
       <div class="vinylTitle">One more thing… 😌🎶</div>
-
       <div id="vinylCase" role="button" aria-label="Vinyl surprise">
         <div class="label" id="vinylLabel">🎁 Click me for a surprise</div>
         <div class="mini" id="vinylMini">I promise it’s cute.</div>
-
         <div id="lid" aria-hidden="true"></div>
         <div id="record" aria-hidden="true"></div>
       </div>
     </div>
   </section>
 
-  <!-- Put your uploaded audio file beside index.html and name it song.m4a -->
+  <!-- audio file in repo root -->
   <audio id="audio" preload="auto">
     <source src="song.m4a" type="audio/mp4">
   </audio>
 
 <script>
-  // ---------- Background hearts ----------
+  // bg hearts
   const bgHearts = document.getElementById("bgHearts");
   const heartChars = ["💗","💖","💞","💕","💘"];
   function spawnBgHeart(){
     const h = document.createElement("div");
     h.className = "bg-heart";
     h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-    const left = Math.random()*100;
+    h.style.left = (Math.random()*100) + "vw";
     const dur = 10 + Math.random()*10;
-    const size = 14 + Math.random()*18;
-    h.style.left = left + "vw";
-    h.style.fontSize = size + "px";
     h.style.animationDuration = dur + "s";
     h.style.animationDelay = (-Math.random()*dur) + "s";
+    h.style.fontSize = (14 + Math.random()*18) + "px";
     bgHearts.appendChild(h);
     setTimeout(()=>h.remove(), dur*1000);
   }
   for(let i=0;i<14;i++) spawnBgHeart();
   setInterval(spawnBgHeart, 900);
 
-  // ---------- Elements ----------
   const toast = document.getElementById("toast");
   const yesBtn = document.getElementById("yesBtn");
   const noBtn  = document.getElementById("noBtn");
   const yesHeart = document.getElementById("yesHeart");
+  const btnRow = document.getElementById("btnRow");
 
   const vinylCase = document.getElementById("vinylCase");
   const vinylLabel = document.getElementById("vinylLabel");
   const vinylMini = document.getElementById("vinylMini");
   const record = document.getElementById("record");
-
   const audioEl = document.getElementById("audio");
 
-  // NO texts (exact order)
   const noTexts = [
     "Wrong button 😌",
     "Try again, love.",
@@ -319,17 +312,16 @@
     "I think your finger slipped this time. It happens.",
     "Plot twist: No decided to find its own valentine"
   ];
-
   let noCount = 0;
   const NO_LIMIT = 6;
 
   function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 
-  // ---------- YES effects ----------
+  // YES updates
   function updateYesEffects(){
     const scale = 1 + (noCount * 0.14);
     yesBtn.style.transform = `scale(${scale})`;
-    const duration = Math.max(0.35, 1.2 - (noCount * 0.15));
+    const duration = Math.max(0.30, 1.2 - (noCount * 0.18)); // faster speed-up
     yesHeart.style.animationDuration = duration + "s";
   }
 
@@ -337,86 +329,84 @@
     const rect = el.getBoundingClientRect();
     const cx = rect.left + rect.width/2;
     const cy = rect.top + rect.height/2;
-
     for(let i=0;i<10;i++){
       const h = document.createElement("div");
       h.className = "pop-heart";
       h.textContent = heartChars[Math.floor(Math.random()*heartChars.length)];
-      const dx = (Math.random()*120 - 60);
-      const dy = (Math.random()*30);
-      h.style.left = (cx + dx) + "px";
-      h.style.top  = (cy + dy) + "px";
+      h.style.left = (cx + (Math.random()*120-60)) + "px";
+      h.style.top  = (cy + (Math.random()*30)) + "px";
       document.body.appendChild(h);
       setTimeout(()=>h.remove(), 1350);
     }
   }
 
-  // ---------- Smooth runaway NO (desktop) ----------
-  let noX = null, noY = null;
+  // ---------- NO stays inside row ----------
+  let dodgeEnabled = false;
+  let noX = 0, noY = 0;
   let vx = 0, vy = 0;
   let rafId = null;
+  let mouseX = 0, mouseY = 0;
 
-  function setNoPos(x, y){
-    const pad = 12;
-    const w = noBtn.offsetWidth || 170;
-    const h = noBtn.offsetHeight || 56;
-
-    const maxX = window.innerWidth  - w - pad;
-    const maxY = window.innerHeight - h - pad;
-
-    noX = clamp(x, pad, maxX);
-    noY = clamp(y, pad, maxY);
-
+  function initNoAbsoluteInRow(){
+    // captures starting position next to YES and keeps it there until dodgeEnabled flips
+    const rr = btnRow.getBoundingClientRect();
+    const nr = noBtn.getBoundingClientRect();
+    noX = nr.left - rr.left;
+    noY = nr.top  - rr.top;
     noBtn.classList.add("runaway");
     noBtn.style.left = noX + "px";
     noBtn.style.top  = noY + "px";
   }
 
-  function ensureNoStartPos(){
-    if (noX !== null && noY !== null) return;
-    const r = noBtn.getBoundingClientRect();
-    setNoPos(r.left, r.top);
+  function setNoPosInRow(x, y){
+    const w = noBtn.offsetWidth || 170;
+    const h = noBtn.offsetHeight || 56;
+    const pad = 6;
+    const maxX = btnRow.clientWidth  - w - pad;
+    const maxY = btnRow.clientHeight - h - pad;
+    noX = clamp(x, pad, Math.max(pad, maxX));
+    noY = clamp(y, pad, Math.max(pad, maxY));
+    noBtn.style.left = noX + "px";
+    noBtn.style.top  = noY + "px";
   }
 
-  function startSmoothRunaway(){
+  function startDodgeEngine(){
     if (rafId) return;
-
-    const MAX_SPEED = 9;    // speed
-    const FRICTION  = 0.86; // smoothing
-    const TRIGGER   = 185;  // how close before it runs
-    const SAFE_PAD  = 12;
-
-    let mouseX = window.innerWidth/2;
-    let mouseY = window.innerHeight/2;
-
-    function onMove(e){ mouseX = e.clientX; mouseY = e.clientY; }
-    window.addEventListener("mousemove", onMove);
+    const MAX_SPEED = 16;   // faster than before
+    const FRICTION  = 0.82; // less friction = quicker movement
+    const TRIGGER   = 175;  // runs away sooner
+    const BOOST     = 1.25; // stronger push away
 
     function step(){
-      if (noBtn.classList.contains("hidden")) {
-        window.removeEventListener("mousemove", onMove);
+      if (noBtn.classList.contains("hidden")){
         rafId = null;
         return;
       }
-
-      ensureNoStartPos();
+      if (!dodgeEnabled){
+        rafId = requestAnimationFrame(step);
+        return;
+      }
 
       const w = noBtn.offsetWidth || 170;
       const h = noBtn.offsetHeight || 56;
 
+      // mouse position relative to row
+      const rr = btnRow.getBoundingClientRect();
+      const mx = mouseX - rr.left;
+      const my = mouseY - rr.top;
+
       const bx = noX + w/2;
       const by = noY + h/2;
-
-      const dx = bx - mouseX;
-      const dy = by - mouseY;
+      const dx = bx - mx;
+      const dy = by - my;
       const dist = Math.max(1, Math.hypot(dx, dy));
 
       if (dist < TRIGGER){
         const strength = (TRIGGER - dist) / TRIGGER; // 0..1
         const ux = dx / dist;
         const uy = dy / dist;
-        vx += ux * (MAX_SPEED * strength);
-        vy += uy * (MAX_SPEED * strength);
+        vx += ux * (MAX_SPEED * strength * BOOST);
+        vy += uy * (MAX_SPEED * strength * BOOST);
       }
 
       vx *= FRICTION;
@@ -428,96 +418,91 @@
         vy = (vy / vLen) * MAX_SPEED;
       }
 
-      let nextX = noX + vx;
-      let nextY = noY + vy;
+      setNoPosInRow(noX + vx, noY + vy);
 
-      const maxX = window.innerWidth  - w - SAFE_PAD;
-      const maxY = window.innerHeight - h - SAFE_PAD;
-
-      // bounce off edges gently
-      if (nextX < SAFE_PAD || nextX > maxX) { vx *= -0.65; nextX = clamp(nextX, SAFE_PAD, maxX); }
-      if (nextY < SAFE_PAD || nextY > maxY) { vy *= -0.65; nextY = clamp(nextY, SAFE_PAD, maxY); }
-
-      setNoPos(nextX, nextY);
+      // gentle bounce on edges by flipping velocity when we hit bounds
+      const pad = 6;
+      const maxX = btnRow.clientWidth  - w - pad;
+      const maxY = btnRow.clientHeight - h - pad;
+      if (noX <= pad || noX >= maxX) vx *= -0.55;
+      if (noY <= pad || noY >= maxY) vy *= -0.55;
 
       rafId = requestAnimationFrame(step);
     }
-
     rafId = requestAnimationFrame(step);
   }
 
-  // Start runaway engine for desktop (it won’t hurt mobile)
-  startSmoothRunaway();
+  // Track mouse always (desktop)
+  window.addEventListener("mousemove", (e)=>{
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
 
-  // NO click (works on all devices) – shows text if she manages to click it
-  noBtn.addEventListener("click", () => {
+  // Enable dodge ONLY after the first NO click or first hover attempt
+  function enableDodge(){
+    if (dodgeEnabled) return;
+    dodgeEnabled = true;
+    btnRow.classList.add("dodge");      // create a bounded play area
+    initNoAbsoluteInRow();              // lock NO into row coordinates
+    startDodgeEngine();
+  }
+
+  // Desktop: start dodging when the cursor gets close to the NO button
+  noBtn.addEventListener("mouseenter", ()=>{
+    enableDodge();
+  });
+
+  // Click NO: show text, grow YES, then dodge (and allow clicking up to 6 times)
+  noBtn.addEventListener("click", ()=>{
     noCount++;
     toast.textContent = noTexts[Math.min(noCount-1, noTexts.length-1)];
     updateYesEffects();
+    enableDodge();
 
     if (noCount >= NO_LIMIT){
       noBtn.classList.add("hidden");
-      return;
-    }
-
-    // small “panic wiggle” after a click so it doesn’t sit still
-    vx += (Math.random()*7 - 3.5);
-    vy += (Math.random()*7 - 3.5);
-  });
-
-  // Keep NO in bounds on rotate/resize
-  window.addEventListener("resize", () => {
-    if (noBtn.classList.contains("runaway") && !noBtn.classList.contains("hidden")){
-      const r = noBtn.getBoundingClientRect();
-      setNoPos(r.left, r.top);
     }
   });
 
-  // ---------- YES click ----------
-  yesBtn.addEventListener("click", () => {
+  // YES click: hearts + scroll down
+  yesBtn.addEventListener("click", ()=>{
     burstHeartsFrom(yesBtn);
     toast.textContent = "Yessss 😌💗 Smart choice. I knew you were my Valentine.";
     yesHeart.style.animation = "none";
-
-    // Scroll to vinyl section
     document.getElementById("page2").scrollIntoView({behavior:"smooth"});
   });
 
-  // ---------- Vinyl surprise behavior ----------
+  // Vinyl: click -> remove label -> open -> slide + spin record -> notes + play song
   let notesTimer = null;
-
   function startNotes(){
     if (notesTimer) return;
-    notesTimer = setInterval(() => {
+    notesTimer = setInterval(()=>{
       const note = document.createElement("div");
       note.className = "note";
       note.textContent = ["♪","♫","♬","♩"][Math.floor(Math.random()*4)];
       const r = vinylCase.getBoundingClientRect();
-      const nx = r.left + r.width/2 + (Math.random()*60 - 30);
-      const ny = r.top + 35 + (Math.random()*30);
-      note.style.left = nx + "px";
-      note.style.top  = ny + "px";
-      note.style.setProperty("--dx", (Math.random()*100 - 50) + "px");
+      note.style.left = (r.left + r.width/2 + (Math.random()*60-30)) + "px";
+      note.style.top  = (r.top + 35 + (Math.random()*30)) + "px";
+      note.style.setProperty("--dx", (Math.random()*100-50) + "px");
       document.body.appendChild(note);
       setTimeout(()=>note.remove(), 2200);
-    }, 260);
+    }, 240);
   }
 
-  vinylCase.addEventListener("click", async () => {
-    // remove the "click me" prompt text after first click
-    if (vinylLabel) vinylLabel.classList.add("hidden");
-    if (vinylMini)  vinylMini.classList.add("hidden");
-
+  vinylCase.addEventListener("click", async ()=>{
+    vinylLabel.classList.add("hidden");
+    vinylMini.classList.add("hidden");
     vinylCase.classList.add("open");
     record.classList.add("spin");
     startNotes();
+    try{ await audioEl.play(); } catch(e){ /* ignore */ }
+  });
 
-    try{
-      await audioEl.play(); // user gesture = allowed on iPhone Safari
-    }catch(e){
-      // If Safari blocks for any reason, ask for a second tap
-      // (rare, but safe)
-    }
+  // Keep NO correctly bounded if the layout changes (rotation)
+  window.addEventListener("resize", ()=>{
+    if (!dodgeEnabled) return;
+    // recalc bounds by clamping current position
+    setNoPosInRow(noX, noY);
   });
 </script>
 </body>
