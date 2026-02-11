@@ -39,7 +39,6 @@
       pointer-events:none;
     }
 
-    /* Background layer */
     .bg{
       position:fixed; inset:0;
       overflow:hidden;
@@ -105,6 +104,7 @@
       width:180px; height:180px;
       background: radial-gradient(circle, rgba(255,79,163,.18), transparent 60%);
       transform: rotate(20deg);
+      pointer-events:none;
     }
 
     h1{
@@ -114,7 +114,7 @@
     }
     .question{
       margin:6px 0 10px;
-      font-weight: 950;
+      font-weight: 900;
       font-size: clamp(20px, 4.2vw, 30px);
       color: var(--text);
     }
@@ -147,6 +147,8 @@
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       box-shadow: 0 14px 28px rgba(255,79,163,.18);
+      position:relative;
+      z-index:2;
     }
     button:active{ transform: scale(.98); }
 
@@ -156,12 +158,10 @@
       transform: scale(var(--yesScale, 1));
       white-space:nowrap;
     }
-    #yesBtn:hover{ filter: brightness(1.03); }
 
-    /* Heart beat (only the emoji) */
     .yesHeart{
       display:inline-block;
-      width: 1.2em;         /* prevents text wiggle */
+      width: 1.2em;
       text-align:center;
       margin-left:6px;
       transform-origin:center;
@@ -178,11 +178,10 @@
       background: linear-gradient(135deg, var(--no1), var(--no2));
       color:#5b1630;
       box-shadow: 0 14px 28px rgba(255,107,138,.22);
-      will-change: transform;
       opacity: var(--noOpacity, 1);
       white-space:nowrap;
+      z-index:3;
     }
-    #noBtn:hover{ filter: brightness(1.02); }
 
     .hint{
       margin-top:10px;
@@ -232,7 +231,7 @@
       to{ transform: translateY(-60px) scale(1.12); opacity:0; }
     }
 
-    /* ===== Success overlay ===== */
+    /* Overlay */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -282,7 +281,6 @@
       font-weight:900;
     }
 
-    /* Confetti */
     .confetti{
       position:fixed;
       width:10px; height:16px;
@@ -297,12 +295,8 @@
       to{ transform: translateY(120vh) rotate(720deg); opacity:0.95; }
     }
 
-    /* ===== Surprise vinyl (appears only after pressing "Press me") ===== */
-    .surpriseWrap{
-      display:none;
-      margin: 10px auto 14px;
-      width:min(560px, 100%);
-    }
+    /* Surprise vinyl */
+    .surpriseWrap{ display:none; margin:10px auto 14px; width:min(560px, 100%); }
     .surpriseWrap.show{ display:block; }
 
     .vinylScene{
@@ -315,8 +309,7 @@
     }
 
     .sleeve{
-      width:260px;
-      height:190px;
+      width:260px; height:190px;
       border-radius:18px;
       background:
         linear-gradient(135deg, rgba(255,79,163,.16), rgba(255,183,214,.28)),
@@ -326,22 +319,13 @@
       position:relative;
       overflow:hidden;
     }
-    .sleeve::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(120px 80px at 80% 20%, rgba(255,255,255,.45), transparent 60%),
-        radial-gradient(140px 100px at 30% 85%, rgba(255,45,85,.12), transparent 60%);
-      pointer-events:none;
-    }
+
     .sleeveLabel{
       position:absolute;
       left:16px; bottom:14px;
       font-weight:950;
       color: rgba(107,58,90,.85);
       font-size:14px;
-      letter-spacing:.2px;
       background: rgba(255,255,255,.62);
       border:1px solid rgba(255,79,163,.18);
       padding:8px 10px;
@@ -349,12 +333,10 @@
     }
 
     .record{
-      width:170px;
-      height:170px;
+      width:170px; height:170px;
       border-radius:50%;
       position:absolute;
-      left:50%;
-      top:50%;
+      left:50%; top:50%;
       transform: translate(-50%,-50%) translateX(-18px) translateY(-2px);
       background:
         radial-gradient(circle at 50% 50%, #fff 0 9px, transparent 10px),
@@ -372,7 +354,6 @@
       opacity:.85;
     }
 
-    /* Trigger animations when surpriseWrap is shown */
     .surpriseWrap.show .record{
       animation: slideOut .85s ease forwards, spin 2.4s linear infinite .85s;
     }
@@ -400,12 +381,6 @@
       100%{ transform: translate(0,0) rotate(0deg); }
     }
 
-    .tinyNote{
-      margin-top:6px;
-      font-size:12px;
-      color: rgba(107,58,90,.75);
-    }
-
     @media (max-width:420px){
       button{ width:150px; }
       .btn-zone{ height:210px; }
@@ -425,16 +400,14 @@
 
       <h1>To the love of my life Sherkima 💗</h1>
       <div class="question">Will you be my Valentine? 💘</div>
-      <p class="subtitle">
-        I promise this isn’t a trick question… unless you press No 😏💘
-      </p>
+      <p class="subtitle">I promise this isn’t a trick question… unless you press No 😏💘</p>
 
       <div class="btn-zone" id="btnZone">
-        <button id="yesBtn">Yes <span id="yesHeart" class="yesHeart">💓</span></button>
-        <button id="noBtn">No 🥺</button>
+        <button type="button" id="yesBtn">Yes <span class="yesHeart">💓</span></button>
+        <button type="button" id="noBtn">No 🥺</button>
       </div>
 
-      <div class="hint"><b>Tip:</b> Try pressing “No” 👀</div>
+      <div class="hint"><b>Tip:</b> Tip? That’s something you can get later 😏🔥</div>
     </div>
   </div>
 
@@ -444,11 +417,10 @@
       <p id="yesLine">I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹</p>
 
       <div class="actions">
-        <button class="btn3" id="surpriseBtn">Press me 😌💝</button>
-        <button class="btn2" id="replayBtn">Replay 🔁</button>
+        <button type="button" class="btn3" id="surpriseBtn">Press me 😌💝</button>
+        <button type="button" class="btn2" id="replayBtn">Back to Us 💗</button>
       </div>
 
-      <!-- Surprise area (hidden until "Press me") -->
       <div class="surpriseWrap" id="surpriseWrap">
         <div class="vinylScene" aria-hidden="true">
           <div class="sleeve">
@@ -461,323 +433,325 @@
           <div class="note" style="--dx:22px; --dy:16px; left: calc(50% + 172px); top: 110px;">🎼</div>
           <div class="note" style="--dx:-14px; --dy:20px; left: calc(50% + 130px); top: 138px;">🎵</div>
         </div>
-        <div class="tinyNote">Add your real song later with an &lt;audio&gt; tag 😌🎶</div>
       </div>
     </div>
   </div>
 
   <script>
-    const bg = document.getElementById("bg");
-    const noBtn = document.getElementById("noBtn");
-    const yesBtn = document.getElementById("yesBtn");
-    const btnZone = document.getElementById("btnZone");
-    const overlay = document.getElementById("overlay");
-    const replayBtn = document.getElementById("replayBtn");
-    const surpriseBtn = document.getElementById("surpriseBtn");
-    const surpriseWrap = document.getElementById("surpriseWrap");
-    const toast = document.getElementById("toast");
-    const yesTitle = document.getElementById("yesTitle");
-    const yesLine = document.getElementById("yesLine");
+    document.addEventListener("DOMContentLoaded", () => {
+      const bg = document.getElementById("bg");
+      const noBtn = document.getElementById("noBtn");
+      const yesBtn = document.getElementById("yesBtn");
+      const btnZone = document.getElementById("btnZone");
+      const overlay = document.getElementById("overlay");
+      const replayBtn = document.getElementById("replayBtn");
+      const surpriseBtn = document.getElementById("surpriseBtn");
+      const surpriseWrap = document.getElementById("surpriseWrap");
+      const toast = document.getElementById("toast");
+      const yesTitle = document.getElementById("yesTitle");
+      const yesLine = document.getElementById("yesLine");
 
-    const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-    function zoneRect(){ return btnZone.getBoundingClientRect(); }
+      // NOTE: We are NOT adding the audio element/play logic yet (per your request).
 
-    // ===== Smooth movement (slow + smooth)
-    let noPos = { x: 0, y: 0 };
-    let target = { x: 0, y: 0 };
-    let animing = false;
+      if (!bg || !noBtn || !yesBtn || !btnZone || !overlay || !replayBtn || !surpriseBtn || !surpriseWrap || !toast || !yesTitle || !yesLine) {
+        console.log("Missing element(s). Check IDs in HTML.");
+        return;
+      }
 
-    function setTarget(x,y){
-      const zr = zoneRect();
-      const bw = noBtn.offsetWidth;
-      const bh = noBtn.offsetHeight;
+      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+      const zoneRect = () => btnZone.getBoundingClientRect();
 
-      const minX = 10, minY = 10;
-      const maxX = zr.width - bw - 10;
-      const maxY = zr.height - bh - 10;
+      const heartGlyphs = ["💗","💖","💘","💕","💞","❤️","🩷"];
 
-      target.x = clamp(x, minX, maxX);
-      target.y = clamp(y, minY, maxY);
+      function popAt(x,y){
+        const el = document.createElement("div");
+        el.className = "pop";
+        el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+        el.style.left = (x + (Math.random()*16-8)) + "px";
+        el.style.top  = (y + (Math.random()*16-8)) + "px";
+        document.body.appendChild(el);
+        setTimeout(()=>el.remove(), 950);
+      }
 
-      if (!animing) smoothStep();
-    }
+      function showToast(text){
+        toast.textContent = text;
+        toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(()=> toast.classList.remove("show"), 1400);
+      }
 
-    function smoothStep(){
-      animing = true;
+      function spawnBgHeart(){
+        const el = document.createElement("div");
+        el.className = "float-heart";
+        el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+        const x = Math.random()*100;
+        const s = 0.65 + Math.random()*1.0;
+        const drift = (-35 + Math.random()*70) + "vw";
+        const dur = 7 + Math.random()*8;
+        el.style.setProperty("--x", x + "vw");
+        el.style.setProperty("--s", s.toFixed(2));
+        el.style.setProperty("--drift", drift);
+        el.style.animationDuration = dur + "s";
+        bg.appendChild(el);
+        setTimeout(() => el.remove(), dur*1000);
+      }
 
-      const ease = 0.11; // slow
-      noPos.x += (target.x - noPos.x) * ease;
-      noPos.y += (target.y - noPos.y) * ease;
+      function spawnSparkle(){
+        const el = document.createElement("div");
+        el.className = "sparkle";
+        el.style.setProperty("--x", (Math.random()*100) + "vw");
+        el.style.setProperty("--y", (80 + Math.random()*40) + "vh");
+        el.style.animationDuration = (3.5 + Math.random()*3.5) + "s";
+        bg.appendChild(el);
+        setTimeout(()=>el.remove(), 7500);
+      }
 
-      noBtn.style.left = noPos.x + "px";
-      noBtn.style.top  = noPos.y + "px";
+      setInterval(() => {
+        if (overlay.classList.contains("show")) return;
+        spawnBgHeart();
+        if (Math.random() < 0.60) spawnBgHeart();
+        if (Math.random() < 0.55) spawnSparkle();
+      }, 520);
 
-      const dx = target.x - noPos.x;
-      const dy = target.y - noPos.y;
-      if (Math.hypot(dx,dy) < 0.6){
-        noPos.x = target.x; noPos.y = target.y;
+      function burstConfetti(){
+        const count = 120;
+        for (let i=0;i<count;i++){
+          const c = document.createElement("div");
+          c.className = "confetti";
+          c.style.left = (Math.random()*window.innerWidth) + "px";
+          c.style.animationDuration = (3 + Math.random()*2.5) + "s";
+          c.style.background = `hsl(${Math.random()*360}, 90%, 60%)`;
+          document.body.appendChild(c);
+          setTimeout(()=>c.remove(), 6500);
+        }
+      }
+
+      // Heartbeat + scaling
+      let noPresses = 0;
+
+      function updateHeartBeat(){
+        const scale = 1.10 + (noPresses * 0.07);
+        const speed = Math.max(0.85, 1.8 - (noPresses * 0.20));
+        yesBtn.style.setProperty("--beatScale", scale.toFixed(2));
+        yesBtn.style.setProperty("--beatSpeed", speed.toFixed(2) + "s");
+      }
+
+      function setYesScale(){
+        const scale = 1 + (noPresses * 0.08);
+        yesBtn.style.setProperty("--yesScale", scale.toFixed(2));
+      }
+
+      function setNoOpacity(){
+        const op = Math.max(0.12, 1 - (noPresses * 0.22));
+        noBtn.style.setProperty("--noOpacity", op.toFixed(2));
+      }
+
+      // Smooth NO movement
+      let noPos = { x: 0, y: 0 };
+      let target = { x: 0, y: 0 };
+      let animing = false;
+
+      function setTarget(x,y){
+        const zr = zoneRect();
+        const bw = noBtn.offsetWidth;
+        const bh = noBtn.offsetHeight;
+        const minX = 10, minY = 10;
+        const maxX = zr.width - bw - 10;
+        const maxY = zr.height - bh - 10;
+
+        target.x = clamp(x, minX, maxX);
+        target.y = clamp(y, minY, maxY);
+
+        if (!animing) smoothStep();
+      }
+
+      function smoothStep(){
+        animing = true;
+        const ease = 0.11;
+        noPos.x += (target.x - noPos.x) * ease;
+        noPos.y += (target.y - noPos.y) * ease;
+
         noBtn.style.left = noPos.x + "px";
         noBtn.style.top  = noPos.y + "px";
-        animing = false;
-        return;
+
+        const dx = target.x - noPos.x;
+        const dy = target.y - noPos.y;
+        if (Math.hypot(dx,dy) < 0.6){
+          noPos.x = target.x; noPos.y = target.y;
+          noBtn.style.left = noPos.x + "px";
+          noBtn.style.top  = noPos.y + "px";
+          animing = false;
+          return;
+        }
+        requestAnimationFrame(smoothStep);
       }
-      requestAnimationFrame(smoothStep);
-    }
 
-    function showToast(text){
-      toast.textContent = text;
-      toast.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toast.classList.remove("show"), 1400);
-    }
+      function placeNoNextToYes(){
+        const zr = zoneRect();
+        const yesX = yesBtn.offsetLeft;
+        const yesY = yesBtn.offsetTop;
+        const gap = 16;
 
-    // ===== Hearts background
-    const heartGlyphs = ["💗","💖","💘","💕","💞","❤️","🩷"];
-    function spawnBgHeart(){
-      const el = document.createElement("div");
-      el.className = "float-heart";
-      el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
+        let startX = yesX + yesBtn.offsetWidth + gap;
+        let startY = yesY;
 
-      const x = Math.random()*100;
-      const s = 0.65 + Math.random()*1.0;
-      const drift = (-35 + Math.random()*70) + "vw";
-      const dur = 7 + Math.random()*8;
+        const bw = noBtn.offsetWidth;
+        const bh = noBtn.offsetHeight;
 
-      el.style.setProperty("--x", x + "vw");
-      el.style.setProperty("--s", s.toFixed(2));
-      el.style.setProperty("--drift", drift);
-      el.style.animationDuration = dur + "s";
+        const minX = 10, minY = 10;
+        const maxX = zr.width - bw - 10;
+        const maxY = zr.height - bh - 10;
 
-      bg.appendChild(el);
-      setTimeout(() => el.remove(), dur*1000);
-    }
+        startX = clamp(startX, minX, maxX);
+        startY = clamp(startY, minY, maxY);
 
-    function spawnSparkle(){
-      const el = document.createElement("div");
-      el.className = "sparkle";
-      el.style.setProperty("--x", (Math.random()*100) + "vw");
-      el.style.setProperty("--y", (80 + Math.random()*40) + "vh");
-      el.style.animationDuration = (3.5 + Math.random()*3.5) + "s";
-      bg.appendChild(el);
-      setTimeout(()=>el.remove(), 7500);
-    }
-
-    setInterval(() => {
-      if (overlay.classList.contains("show")) return;
-      spawnBgHeart();
-      if (Math.random() < 0.60) spawnBgHeart();
-      if (Math.random() < 0.55) spawnSparkle();
-    }, 520);
-
-    function popAt(x,y){
-      const el = document.createElement("div");
-      el.className = "pop";
-      el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
-      el.style.left = (x + (Math.random()*16-8)) + "px";
-      el.style.top  = (y + (Math.random()*16-8)) + "px";
-      document.body.appendChild(el);
-      setTimeout(()=>el.remove(), 950);
-    }
-
-    function burstConfetti(){
-      const count = 120;
-      for (let i=0;i<count;i++){
-        const c = document.createElement("div");
-        c.className = "confetti";
-        c.style.left = (Math.random()*window.innerWidth) + "px";
-        c.style.animationDuration = (3 + Math.random()*2.5) + "s";
-        c.style.background = `hsl(${Math.random()*360}, 90%, 60%)`;
-        document.body.appendChild(c);
-        setTimeout(()=>c.remove(), 6500);
+        noPos = { x: startX, y: startY };
+        target = { x: startX, y: startY };
+        noBtn.style.left = startX + "px";
+        noBtn.style.top  = startY + "px";
       }
-    }
 
-    // ===== Beat control for the YES heart
-    let noPresses = 0;
+      function evade(pointerX, pointerY){
+        if (noPresses >= 4) return;
+        const zr = zoneRect();
+        const px = pointerX - zr.left;
+        const py = pointerY - zr.top;
 
-    function updateHeartBeat(){
-      const scale = 1.10 + (noPresses * 0.07);
-      const speed = Math.max(0.85, 1.8 - (noPresses * 0.20));
-      yesBtn.style.setProperty("--beatScale", scale.toFixed(2));
-      yesBtn.style.setProperty("--beatSpeed", speed.toFixed(2) + "s");
-    }
+        const maxJump = 120;
+        let rx = px + (Math.random()*2-1)*maxJump;
+        let ry = py + (Math.random()*2-1)*maxJump;
 
-    function setYesScale(){
-      const scale = 1 + (noPresses * 0.08);
-      yesBtn.style.setProperty("--yesScale", scale.toFixed(2));
-    }
+        const vx = (noPos.x - px);
+        const vy = (noPos.y - py);
+        const len = Math.hypot(vx,vy) || 1;
+        rx += (vx/len) * 55;
+        ry += (vy/len) * 55;
 
-    function setNoOpacity(){
-      const op = Math.max(0.12, 1 - (noPresses * 0.22));
-      noBtn.style.setProperty("--noOpacity", op.toFixed(2));
-    }
-
-    // Place NO next to YES (reliable)
-    function placeNoNextToYes(){
-      const zr = zoneRect();
-      const yesX = yesBtn.offsetLeft;
-      const yesY = yesBtn.offsetTop;
-
-      const gap = 16;
-      let startX = yesX + yesBtn.offsetWidth + gap;
-      let startY = yesY;
-
-      const bw = noBtn.offsetWidth;
-      const bh = noBtn.offsetHeight;
-
-      const minX = 10, minY = 10;
-      const maxX = zr.width - bw - 10;
-      const maxY = zr.height - bh - 10;
-
-      startX = clamp(startX, minX, maxX);
-      startY = clamp(startY, minY, maxY);
-
-      noPos = { x: startX, y: startY };
-      target = { x: startX, y: startY };
-      noBtn.style.left = startX + "px";
-      noBtn.style.top  = startY + "px";
-    }
-
-    function evade(pointerX, pointerY){
-      if (noPresses >= 4) return;
-
-      const zr = zoneRect();
-      const px = pointerX - zr.left;
-      const py = pointerY - zr.top;
-
-      const maxJump = 120;
-      let rx = px + (Math.random()*2-1)*maxJump;
-      let ry = py + (Math.random()*2-1)*maxJump;
-
-      const vx = (noPos.x - px);
-      const vy = (noPos.y - py);
-      const len = Math.hypot(vx,vy) || 1;
-      rx += (vx/len) * 55;
-      ry += (vy/len) * 55;
-
-      setTarget(rx, ry);
-    }
-
-    // Move away when close (no hearts here)
-    document.addEventListener("mousemove", (e) => {
-      if (overlay.classList.contains("show")) return;
-      if (noPresses >= 4) return;
-
-      const r = noBtn.getBoundingClientRect();
-      const mx = e.clientX, my = e.clientY;
-      const dist = Math.hypot((r.left + r.width/2) - mx, (r.top + r.height/2) - my);
-
-      if (dist < 92){
-        evade(mx, my);
+        setTarget(rx, ry);
       }
-    }, { passive:true });
 
-    // Hearts ONLY on direct hover of NO
-    noBtn.addEventListener("mouseenter", () => {
-      if (overlay.classList.contains("show")) return;
-      if (noPresses >= 4) return;
+      // proximity move (no hearts)
+      document.addEventListener("mousemove", (e) => {
+        if (overlay.classList.contains("show")) return;
+        if (noPresses >= 4) return;
 
-      const r = noBtn.getBoundingClientRect();
-      const x = r.left + r.width/2;
-      const y = r.top + r.height/2;
+        const r = noBtn.getBoundingClientRect();
+        const mx = e.clientX, my = e.clientY;
+        const dist = Math.hypot((r.left + r.width/2) - mx, (r.top + r.height/2) - my);
+        if (dist < 92) evade(mx, my);
+      }, { passive:true });
 
-      popAt(x, y);
-      evade(x, y);
-    });
+      // hearts ONLY on direct hover of NO
+      noBtn.addEventListener("mouseenter", () => {
+        if (overlay.classList.contains("show")) return;
+        if (noPresses >= 4) return;
 
-    // Mobile: hearts on touch attempt
-    noBtn.addEventListener("touchstart", (e) => {
-      if (overlay.classList.contains("show")) return;
-      if (noPresses >= 4) return;
+        const r = noBtn.getBoundingClientRect();
+        const x = r.left + r.width/2;
+        const y = r.top + r.height/2;
 
-      const t = e.touches && e.touches[0];
-      if (!t) return;
+        popAt(x,y);
+        evade(x,y);
+      });
 
-      popAt(t.clientX, t.clientY);
-      evade(t.clientX, t.clientY);
-      e.preventDefault();
-    }, { passive:false });
+      // mobile touch
+      noBtn.addEventListener("touchstart", (e) => {
+        if (overlay.classList.contains("show")) return;
+        if (noPresses >= 4) return;
+        const t = e.touches && e.touches[0];
+        if (!t) return;
+        popAt(t.clientX, t.clientY);
+        evade(t.clientX, t.clientY);
+        e.preventDefault();
+      }, { passive:false });
 
-    // Touch move
-    btnZone.addEventListener("touchmove", (e) => {
-      if (overlay.classList.contains("show")) return;
-      if (noPresses >= 4) return;
-      const t = e.touches && e.touches[0];
-      if (!t) return;
-      evade(t.clientX, t.clientY);
-    }, { passive:true });
+      btnZone.addEventListener("touchmove", (e) => {
+        if (overlay.classList.contains("show")) return;
+        if (noPresses >= 4) return;
+        const t = e.touches && e.touches[0];
+        if (!t) return;
+        evade(t.clientX, t.clientY);
+      }, { passive:true });
 
-    // NO click: always works, boosts yes + heartbeat
-    const noMessages = [
-      "Try again 😌",
-      "Your hand slipped… it happens 😭💗",
-      "You pressed No again? I’m impressed 😭💞",
-      "Nice attempt 😌💘",
-      "Mhm… you’re really committed 😂",
-      "I saw that 👀💕",
-      "You’re adorable, keep trying 😌🩷",
-      "Nope… try again, Valentine 😭🌹",
-      "That button is fighting for its life 😂💗"
-    ];
+      const noMessages = [
+        "Try again 😌",
+        "Your hand slipped… it happens 😭💗",
+        "You pressed No again? I’m impressed 😭💞",
+        "Nice attempt 😌💘",
+        "Mhm… you’re really committed 😂",
+        "I saw that 👀💕",
+        "You’re adorable, keep trying 😌🩷",
+        "Nope… try again, Valentine 😭🌹",
+        "That button is fighting for its life 😂💗"
+      ];
 
-    noBtn.addEventListener("click", (e) => {
-      const x = e.clientX || (window.innerWidth/2);
-      const y = e.clientY || (window.innerHeight/2);
-      popAt(x,y);
+      noBtn.addEventListener("click", (e) => {
+        const x = e.clientX || (window.innerWidth/2);
+        const y = e.clientY || (window.innerHeight/2);
+        popAt(x,y);
 
-      if (noPresses >= 4) return;
+        if (noPresses >= 4) return;
 
-      noPresses++;
-      setYesScale();
-      setNoOpacity();
+        noPresses++;
+        setYesScale();
+        setNoOpacity();
+        updateHeartBeat();
+
+        if (noPresses === 4){
+          showToast("Plot Twist: No has decided to find its own Valentine. 💘");
+          noBtn.style.pointerEvents = "none";
+          setTarget(target.x + 140, target.y - 80);
+          setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
+          return;
+        }
+
+        showToast(noMessages[(noPresses - 1) % noMessages.length]);
+        setTimeout(() => evade(x,y), 120);
+      });
+
+      // YES click
+      yesBtn.addEventListener("click", (e) => {
+        popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
+        overlay.classList.add("show");
+        burstConfetti();
+        surpriseWrap.classList.remove("show");
+
+        if (noPresses === 0){
+          yesTitle.textContent = "Awww you pressed it on the first try 😭💖";
+          yesLine.textContent = "That was too easy… but I’m not complaining 😌🌹";
+        } else {
+          yesTitle.textContent = "You said YESSS 💖";
+          yesLine.textContent = "I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹";
+        }
+      });
+
+      // Surprise: show vinyl
+      surpriseBtn.addEventListener("click", () => {
+        surpriseWrap.classList.add("show");
+        showToast("Okayyy… here’s the surprise 😌🎶");
+      });
+
+      // Back to main page (no audio stop yet)
+      replayBtn.addEventListener("click", () => {
+        overlay.classList.remove("show");
+
+        noPresses = 0;
+        yesBtn.style.setProperty("--yesScale", "1");
+        noBtn.style.setProperty("--noOpacity", "1");
+        noBtn.style.opacity = "1";
+        noBtn.style.pointerEvents = "auto";
+
+        surpriseWrap.classList.remove("show");
+
+        updateHeartBeat();
+        setTimeout(placeNoNextToYes, 0);
+      });
+
+      // Init
       updateHeartBeat();
-
-      if (noPresses === 4){
-        showToast("Plot Twist: No has decided to find its own Valentine. 💘");
-        noBtn.style.pointerEvents = "none";
-        setTarget(target.x + 140, target.y - 80);
-        setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
-        return;
-      }
-
-      showToast(noMessages[(noPresses - 1) % noMessages.length]);
-      setTimeout(() => evade(x,y), 120);
+      setTimeout(placeNoNextToYes, 0);
+      window.addEventListener("resize", () => setTimeout(placeNoNextToYes, 0));
     });
-
-    // YES click (mentions first try if she never pressed No)
-    yesBtn.addEventListener("click", (e) => {
-      popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
-
-      overlay.classList.add("show");
-      burstConfetti();
-
-      // Hide surprise until button pressed
-      surpriseWrap.classList.remove("show");
-
-      if (noPresses === 0){
-        yesTitle.textContent = "Awww you pressed it on the first try 😭💖";
-        yesLine.textContent = "That was too easy… but I’m not complaining 😌🌹";
-      } else {
-        yesTitle.textContent = "You said YESSS 💖";
-        yesLine.textContent = "I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹";
-      }
-    });
-
-    // Surprise button: reveals vinyl case + vinyl + notes
-    surpriseBtn.addEventListener("click", () => {
-      surpriseWrap.classList.add("show");
-      showToast("Okayyy… here’s the surprise 😌🎶");
-    });
-
-    replayBtn.addEventListener("click", () => {
-      overlay.classList.remove("show");
-
-      noPresses = 0;
-      yesBtn.style.setProperty("--yesScale", "1");
-      noBtn.style.setProperty("--noOpacity", "1");
-      noBtn.style.opacity = "1";
-      noBtn.style.pointerEvents = "auto";
-
-      updateHeartBeat();
-      surpriseWrap.classList.remove("show");
-      setTimeout(placeNoNextToYes,
+  </script>
+</body>
+</html>
