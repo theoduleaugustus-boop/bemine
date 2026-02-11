@@ -9,7 +9,6 @@
       --pink:#ff4fa3;
       --pink2:#ff77b7;
       --rose:#ff2d55;
-      --soft:#fff1f7;
       --card:#ffffffcc;
       --text:#2a1630;
       --muted:#6b3a5a;
@@ -33,7 +32,6 @@
       overflow:hidden;
     }
 
-    /* soft vignette */
     body::after{
       content:"";
       position:fixed; inset:0;
@@ -41,12 +39,42 @@
       pointer-events:none;
     }
 
-    /* Floating hearts layer container */
+    /* Background layer */
     .bg{
       position:fixed; inset:0;
       overflow:hidden;
       pointer-events:none;
       z-index:0;
+    }
+
+    .sparkle{
+      position:absolute;
+      width:6px; height:6px;
+      border-radius:50%;
+      background: rgba(255,255,255,.85);
+      box-shadow: 0 0 16px rgba(255,79,163,.25);
+      opacity:0;
+      animation: twinkle linear forwards;
+    }
+    @keyframes twinkle{
+      0%{ transform: translate(var(--x), var(--y)) scale(.7); opacity:0; }
+      20%{ opacity:.9; }
+      60%{ opacity:.6; }
+      100%{ transform: translate(var(--x), calc(var(--y) - 20vh)) scale(1.05); opacity:0; }
+    }
+
+    .float-heart{
+      position:absolute;
+      left:0; top:0;
+      font-size:18px;
+      opacity:.9;
+      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
+      animation: rise linear forwards;
+    }
+    @keyframes rise{
+      from{ transform: translate(var(--x), 110vh) scale(var(--s)); opacity:0; }
+      10%{ opacity:.95; }
+      to{ transform: translate(calc(var(--x) + var(--drift)), -15vh) scale(calc(var(--s) + .15)); opacity:0; }
     }
 
     .wrap{
@@ -91,34 +119,6 @@
       line-height:1.35;
     }
 
-    /* Cute vinyl */
-    .vinyl-wrap{
-      display:flex;
-      justify-content:center;
-      margin:8px 0 12px;
-    }
-    .vinyl{
-      width:130px; height:130px;
-      border-radius:50%;
-      background:
-        radial-gradient(circle at 50% 50%, #ffffff 0 9px, transparent 10px),
-        radial-gradient(circle at 50% 50%, #ffd1e8 0 28px, #ff8fc6 29px 100%),
-        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.0) 0 3px, rgba(255,255,255,.22) 3px 6px);
-      box-shadow: 0 12px 28px rgba(255,79,163,.22);
-      position:relative;
-      animation: spin 2.6s linear infinite;
-    }
-    .vinyl::after{
-      content:"";
-      position:absolute;
-      inset:18px;
-      border-radius:50%;
-      background:
-        radial-gradient(circle, #ffffff 0 18px, #ff4fa3 19px 60%, #ffb703 61% 100%);
-      opacity:.85;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     .btn-zone{
       position:relative;
       width:min(520px, 100%);
@@ -135,9 +135,9 @@
       padding:14px 18px;
       border-radius:16px;
       font-size:16px;
-      font-weight:800;
+      font-weight:900;
       cursor:pointer;
-      transition: transform .12s ease, filter .18s ease;
+      transition: transform .18s ease, filter .18s ease, opacity .25s ease;
       user-select:none;
       -webkit-tap-highlight-color: transparent;
       box-shadow: 0 14px 28px rgba(255,79,163,.18);
@@ -147,18 +147,30 @@
     #yesBtn{
       background: linear-gradient(135deg, var(--yes1), var(--yes2));
       color:#fff;
+      transform: scale(var(--yesScale, 1));
     }
     #yesBtn:hover{ filter: brightness(1.03); }
 
-    /* No button: we animate its transform smoothly */
+    /* Heart beat (only the emoji) */
+    .yesHeart{
+      display:inline-block;
+      margin-left:6px;
+      transform-origin:center;
+      animation: beat var(--beatSpeed, 1.8s) ease-in-out infinite;
+    }
+    @keyframes beat{
+      0%, 100% { transform: scale(1); }
+      25%      { transform: scale(var(--beatScale, 1.10)); }
+      50%      { transform: scale(1); }
+    }
+
     #noBtn{
       position:absolute;
-      left: 66%;
-      top: 56%;
       background: linear-gradient(135deg, var(--no1), var(--no2));
       color:#5b1630;
       box-shadow: 0 14px 28px rgba(255,107,138,.22);
       will-change: transform;
+      opacity: var(--noOpacity, 1);
     }
     #noBtn:hover{ filter: brightness(1.02); }
 
@@ -168,7 +180,6 @@
       color: rgba(107,58,90,.78);
     }
 
-    /* Dialog bubble for "No" catches */
     .toast{
       position:absolute;
       left:50%;
@@ -178,7 +189,7 @@
       border: 1px solid rgba(255,79,163,.18);
       border-radius: 999px;
       padding: 10px 14px;
-      font-weight: 700;
+      font-weight: 900;
       font-size: 14px;
       color: #6b2c53;
       box-shadow: 0 14px 30px rgba(255,79,163,.18);
@@ -196,7 +207,22 @@
       transform: translateX(-50%) translateY(4px);
     }
 
-    /* Success overlay */
+    .pop{
+      position:fixed;
+      font-size:18px;
+      pointer-events:none;
+      opacity:.95;
+      animation: popUp .9s ease forwards;
+      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
+      z-index:50;
+    }
+    @keyframes popUp{
+      from{ transform: translateY(0) scale(.9); opacity:0; }
+      20%{ opacity:1; }
+      to{ transform: translateY(-60px) scale(1.12); opacity:0; }
+    }
+
+    /* ===== Success overlay ===== */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -209,7 +235,7 @@
     .overlay.show{ display:grid; }
 
     .success{
-      width:min(700px, 100%);
+      width:min(740px, 100%);
       border:1px solid rgba(255,79,163,.22);
       border-radius:26px;
       background:#ffffffd8;
@@ -224,7 +250,7 @@
       font-size: clamp(26px, 5vw, 44px);
     }
     .success p{
-      margin:0 0 16px;
+      margin:0 0 12px;
       color: rgba(107,58,90,.9);
     }
 
@@ -233,9 +259,8 @@
       flex-wrap:wrap;
       gap:12px;
       justify-content:center;
-      margin-top:8px;
+      margin-top:10px;
     }
-
     .btn2{
       background: linear-gradient(135deg, #60a5fa, #a78bfa);
       color:#09101f;
@@ -262,40 +287,103 @@
       to{ transform: translateY(120vh) rotate(720deg); opacity:0.95; }
     }
 
-    /* Heart particles */
-    .float-heart{
-      position:absolute;
-      left:0; top:0;
-      font-size:18px;
-      opacity:.9;
-      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
-      animation: rise linear forwards;
+    /* ===== Vinyl-in-sleeve (ONLY shows after YES overlay) ===== */
+    .vinylScene{
+      width:min(520px, 100%);
+      margin: 10px auto 14px;
+      position:relative;
+      height:220px;
+      display:grid;
+      place-items:center;
     }
-    @keyframes rise{
-      from{ transform: translate(var(--x), 110vh) scale(var(--s)); opacity:0; }
-      10%{ opacity:.95; }
-      to{ transform: translate(calc(var(--x) + var(--drift)), -15vh) scale(calc(var(--s) + .15)); opacity:0; }
+    .sleeve{
+      width:260px;
+      height:190px;
+      border-radius:18px;
+      background:
+        linear-gradient(135deg, rgba(255,79,163,.16), rgba(255,183,214,.28)),
+        radial-gradient(150px 120px at 20% 20%, rgba(255,255,255,.55), transparent 60%);
+      border: 1px solid rgba(255,79,163,.22);
+      box-shadow: 0 20px 60px rgba(255,79,163,.18);
+      position:relative;
+      overflow:hidden;
+    }
+    .sleeve::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:
+        radial-gradient(120px 80px at 80% 20%, rgba(255,255,255,.45), transparent 60%),
+        radial-gradient(140px 100px at 30% 85%, rgba(255,45,85,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .sleeveLabel{
+      position:absolute;
+      left:16px; bottom:14px;
+      font-weight:900;
+      color: rgba(107,58,90,.85);
+      font-size:14px;
+      letter-spacing:.2px;
+      background: rgba(255,255,255,.55);
+      border:1px solid rgba(255,79,163,.18);
+      padding:8px 10px;
+      border-radius:999px;
     }
 
-    /* little sparkle hearts that appear on interactions */
-    .pop{
-      position:fixed;
-      font-size:18px;
-      pointer-events:none;
-      opacity:.95;
-      animation: popUp .9s ease forwards;
-      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
-      z-index:50;
+    .record{
+      width:170px;
+      height:170px;
+      border-radius:50%;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%,-50%) translateX(-18px) translateY(-2px);
+      background:
+        radial-gradient(circle at 50% 50%, #fff 0 9px, transparent 10px),
+        radial-gradient(circle at 50% 50%, #ffd1e8 0 32px, #ff8fc6 33px 100%),
+        repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,.0) 0 3px, rgba(255,255,255,.22) 3px 6px);
+      box-shadow: 0 16px 34px rgba(255,79,163,.20);
+      opacity:0;
     }
-    @keyframes popUp{
-      from{ transform: translateY(0) scale(.9); opacity:0; }
-      20%{ opacity:1; }
-      to{ transform: translateY(-60px) scale(1.12); opacity:0; }
+    .record::after{
+      content:"";
+      position:absolute;
+      inset:24px;
+      border-radius:50%;
+      background: radial-gradient(circle, #fff 0 18px, #ff4fa3 19px 62%, #ffb703 63% 100%);
+      opacity:.85;
+    }
+
+    .overlay.show .record{
+      animation: slideOut .85s ease forwards, spin 2.4s linear infinite .85s;
+    }
+    @keyframes slideOut{
+      from{ opacity:0; transform: translate(-50%,-50%) translateX(-18px) translateY(-2px); }
+      to{ opacity:1; transform: translate(-50%,-50%) translateX(92px) translateY(-2px); }
+    }
+    @keyframes spin { to { transform: translate(-50%,-50%) translateX(92px) translateY(-2px) rotate(360deg); } }
+
+    .note{
+      position:absolute;
+      font-size:18px;
+      opacity:0;
+      filter: drop-shadow(0 10px 14px rgba(255,79,163,.18));
+    }
+    .overlay.show .note{
+      animation: notesFloat 2.4s ease-in-out infinite;
+      opacity:1;
+    }
+    @keyframes notesFloat{
+      0%{ transform: translate(0,0) rotate(0deg); }
+      50%{ transform: translate(var(--dx), var(--dy)) rotate(8deg); }
+      100%{ transform: translate(0,0) rotate(0deg); }
     }
 
     @media (max-width:420px){
-      button{ width:140px; }
+      button{ width:150px; }
       .btn-zone{ height:210px; }
+      .vinylScene{ height:240px; }
+      .sleeve{ width:240px; }
     }
   </style>
 </head>
@@ -308,18 +396,14 @@
       <div class="ribbon" aria-hidden="true"></div>
       <div class="toast" id="toast">🙂</div>
 
-      <div class="vinyl-wrap">
-        <div class="vinyl" aria-hidden="true"></div>
-      </div>
-
       <h1>To the love of my life Sherkima 💗</h1>
       <p class="subtitle">
-        I have one important question… and you’re not allowed to escape it 😌
+        I promise this isn’t a trick question… unless you press No 😏💘
       </p>
 
       <div class="btn-zone" id="btnZone">
-        <button id="yesBtn">Yes ✅</button>
-        <button id="noBtn">No ❌</button>
+        <button id="yesBtn">Yes <span id="yesHeart" class="yesHeart">💓</span></button>
+        <button id="noBtn">No 🥺</button>
       </div>
 
       <div class="hint">Try “No” if you want… it’s cute either way. 💘</div>
@@ -329,9 +413,20 @@
   <div class="overlay" id="overlay">
     <div class="success">
       <h2>You said YESSS 💖</h2>
-      <p>
-        I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹
-      </p>
+      <p>I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹</p>
+
+      <div class="vinylScene" aria-hidden="true">
+        <div class="sleeve">
+          <div class="sleeveLabel">Sherkima’s Valentine 💞</div>
+        </div>
+        <div class="record"></div>
+
+        <div class="note" style="--dx:18px; --dy:-22px; left: calc(50% + 150px); top: 54px;">🎵</div>
+        <div class="note" style="--dx:-18px; --dy:-18px; left: calc(50% + 120px); top: 22px;">🎶</div>
+        <div class="note" style="--dx:22px; --dy:16px; left: calc(50% + 172px); top: 110px;">🎼</div>
+        <div class="note" style="--dx:-14px; --dy:20px; left: calc(50% + 130px); top: 138px;">🎵</div>
+      </div>
+
       <div class="actions">
         <button class="btn3" id="playBtn">Play me ▶️</button>
         <button class="btn2" id="replayBtn">Replay 🔁</button>
@@ -340,7 +435,6 @@
   </div>
 
   <script>
-    // ===== Elements
     const bg = document.getElementById("bg");
     const noBtn = document.getElementById("noBtn");
     const yesBtn = document.getElementById("yesBtn");
@@ -350,12 +444,10 @@
     const playBtn = document.getElementById("playBtn");
     const toast = document.getElementById("toast");
 
-    // ===== Utilities
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-
     function zoneRect(){ return btnZone.getBoundingClientRect(); }
 
-    // Smooth movement state (no choppy teleport)
+    // ===== Smooth movement (slow + smooth)
     let noPos = { x: 0, y: 0 };
     let target = { x: 0, y: 0 };
     let animing = false;
@@ -365,8 +457,7 @@
       const bw = noBtn.offsetWidth;
       const bh = noBtn.offsetHeight;
 
-      const minX = 10;
-      const minY = 10;
+      const minX = 10, minY = 10;
       const maxX = zr.width - bw - 10;
       const maxY = zr.height - bh - 10;
 
@@ -379,21 +470,17 @@
     function smoothStep(){
       animing = true;
 
-      // ease toward target
-      const ease = 0.18; // smaller = slower/smoother
+      const ease = 0.11; // slow
       noPos.x += (target.x - noPos.x) * ease;
       noPos.y += (target.y - noPos.y) * ease;
 
-      // apply
       noBtn.style.left = noPos.x + "px";
       noBtn.style.top  = noPos.y + "px";
 
-      // stop when close
       const dx = target.x - noPos.x;
       const dy = target.y - noPos.y;
       if (Math.hypot(dx,dy) < 0.6){
-        noPos.x = target.x;
-        noPos.y = target.y;
+        noPos.x = target.x; noPos.y = target.y;
         noBtn.style.left = noPos.x + "px";
         noBtn.style.top  = noPos.y + "px";
         animing = false;
@@ -402,27 +489,24 @@
       requestAnimationFrame(smoothStep);
     }
 
-    function initNo(){
-      const zr = zoneRect();
-      const startX = zr.width * 0.66;
-      const startY = zr.height * 0.55;
-      noPos = { x: startX, y: startY };
-      target = { x: startX, y: startY };
-      noBtn.style.left = startX + "px";
-      noBtn.style.top  = startY + "px";
+    function showToast(text){
+      toast.textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=> toast.classList.remove("show"), 1400);
     }
 
-    // ===== Cute background hearts (more variety)
+    // ===== Hearts background
     const heartGlyphs = ["💗","💖","💘","💕","💞","❤️","🩷"];
     function spawnBgHeart(){
       const el = document.createElement("div");
       el.className = "float-heart";
       el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
 
-      const x = Math.random()*100;                // vw
-      const s = 0.7 + Math.random()*0.9;          // scale
-      const drift = (-30 + Math.random()*60) + "vw";
-      const dur = 7 + Math.random()*7;            // seconds
+      const x = Math.random()*100;
+      const s = 0.65 + Math.random()*1.0;
+      const drift = (-35 + Math.random()*70) + "vw";
+      const dur = 7 + Math.random()*8;
 
       el.style.setProperty("--x", x + "vw");
       el.style.setProperty("--s", s.toFixed(2));
@@ -433,15 +517,23 @@
       setTimeout(() => el.remove(), dur*1000);
     }
 
-    // Start a steady stream of hearts
+    function spawnSparkle(){
+      const el = document.createElement("div");
+      el.className = "sparkle";
+      el.style.setProperty("--x", (Math.random()*100) + "vw");
+      el.style.setProperty("--y", (80 + Math.random()*40) + "vh");
+      el.style.animationDuration = (3.5 + Math.random()*3.5) + "s";
+      bg.appendChild(el);
+      setTimeout(()=>el.remove(), 7500);
+    }
+
     setInterval(() => {
       if (overlay.classList.contains("show")) return;
-      // spawn 1-2 each tick for a richer background
       spawnBgHeart();
-      if (Math.random() < 0.35) spawnBgHeart();
+      if (Math.random() < 0.60) spawnBgHeart();
+      if (Math.random() < 0.55) spawnSparkle();
     }, 520);
 
-    // ===== Pop heart on interactions
     function popAt(x,y){
       const el = document.createElement("div");
       el.className = "pop";
@@ -452,7 +544,6 @@
       setTimeout(()=>el.remove(), 950);
     }
 
-    // ===== Confetti
     function burstConfetti(){
       const count = 120;
       for (let i=0;i<count;i++){
@@ -466,130 +557,184 @@
       }
     }
 
-    // ===== "No" logic:
-    // - It moves away when close, but slower and smoother.
-    // - Small chance she can "catch" it (click succeeds).
-    // - Clicking "No" triggers cute messages (never rejects).
-    let canBeCaught = false;
-    let catchWindowTimer = null;
+    // ===== Beat control for the YES heart
+    let noPresses = 0;
 
-    const noMessages = [
-      "Nice try 😌💗",
-      "You’re really gonna press NO? 😂",
-      "That button is just for decoration, babe 💘",
-      "Mhm… you want me that bad huh 😏",
-      "Okay okay I see you trying 😭💕",
-      "Still my Valentine though 🌹",
-      "You’re adorable. Keep trying 😌💖"
-    ];
-
-    function showToast(text){
-      toast.textContent = text;
-      toast.classList.add("show");
-      clearTimeout(showToast._t);
-      showToast._t = setTimeout(()=> toast.classList.remove("show"), 1200);
+    function updateHeartBeat(){
+      const scale = 1.10 + (noPresses * 0.07);
+      const speed = Math.max(0.85, 1.8 - (noPresses * 0.20));
+      yesBtn.style.setProperty("--beatScale", scale.toFixed(2));
+      yesBtn.style.setProperty("--beatSpeed", speed.toFixed(2) + "s");
     }
 
-    function openCatchWindow(){
-      // brief moment where click can land (so it feels catchable)
-      canBeCaught = true;
-      clearTimeout(catchWindowTimer);
-      catchWindowTimer = setTimeout(()=> { canBeCaught = false; }, 220); // 0.22s window
+    function setYesScale(){
+      const scale = 1 + (noPresses * 0.08);
+      yesBtn.style.setProperty("--yesScale", scale.toFixed(2));
     }
 
-    function evade(pointerX, pointerY){
+    function setNoOpacity(){
+      const op = Math.max(0.12, 1 - (noPresses * 0.22));
+      noBtn.style.setProperty("--noOpacity", op.toFixed(2));
+    }
+
+    // Place NO next to YES (reliable: offsetLeft/Top inside same container)
+    function placeNoNextToYes(){
       const zr = zoneRect();
+      const yesX = yesBtn.offsetLeft;
+      const yesY = yesBtn.offsetTop;
+
+      const gap = 16;
+      let startX = yesX + yesBtn.offsetWidth + gap;
+      let startY = yesY;
+
       const bw = noBtn.offsetWidth;
       const bh = noBtn.offsetHeight;
 
-      // pointer relative to zone
+      const minX = 10, minY = 10;
+      const maxX = zr.width - bw - 10;
+      const maxY = zr.height - bh - 10;
+
+      startX = clamp(startX, minX, maxX);
+      startY = clamp(startY, minY, maxY);
+
+      noPos = { x: startX, y: startY };
+      target = { x: startX, y: startY };
+      noBtn.style.left = startX + "px";
+      noBtn.style.top  = startY + "px";
+    }
+
+    function evade(pointerX, pointerY){
+      if (noPresses >= 4) return;
+
+      const zr = zoneRect();
       const px = pointerX - zr.left;
       const py = pointerY - zr.top;
 
-      // choose a new target that isn't too far (so it looks smooth and catchable)
-      const maxJump = 160; // limit jump distance to avoid "teleport feel"
+      const maxJump = 120;
       let rx = px + (Math.random()*2-1)*maxJump;
       let ry = py + (Math.random()*2-1)*maxJump;
 
-      // also bias away from the pointer (push vector)
       const vx = (noPos.x - px);
       const vy = (noPos.y - py);
       const len = Math.hypot(vx,vy) || 1;
-      rx += (vx/len) * 70;
-      ry += (vy/len) * 70;
+      rx += (vx/len) * 55;
+      ry += (vy/len) * 55;
 
       setTarget(rx, ry);
-
-      // sometimes allow catch chance right after it moves
-      if (Math.random() < 0.22) openCatchWindow(); // 22% chance per evade
     }
 
-    // Mouse proximity detection (gentler range)
+    // Move away when close (no hearts here)
     document.addEventListener("mousemove", (e) => {
       if (overlay.classList.contains("show")) return;
+      if (noPresses >= 4) return;
+
       const r = noBtn.getBoundingClientRect();
       const mx = e.clientX, my = e.clientY;
       const dist = Math.hypot((r.left + r.width/2) - mx, (r.top + r.height/2) - my);
 
-      if (dist < 95){
-        // Smooth evade, not instant
+      if (dist < 92){
         evade(mx, my);
-        popAt(mx, my);
       }
     }, { passive:true });
 
-    // Touch support: if finger comes near, move
+    // Hearts ONLY on direct hover of NO
+    noBtn.addEventListener("mouseenter", () => {
+      if (overlay.classList.contains("show")) return;
+      if (noPresses >= 4) return;
+
+      const r = noBtn.getBoundingClientRect();
+      const x = r.left + r.width/2;
+      const y = r.top + r.height/2;
+
+      popAt(x, y);
+      evade(x, y);
+    });
+
+    // Mobile: hearts on touch attempt
+    noBtn.addEventListener("touchstart", (e) => {
+      if (overlay.classList.contains("show")) return;
+      if (noPresses >= 4) return;
+
+      const t = e.touches && e.touches[0];
+      if (!t) return;
+
+      popAt(t.clientX, t.clientY);
+      evade(t.clientX, t.clientY);
+
+      e.preventDefault();
+    }, { passive:false });
+
+    // Touch move (keeps it playful)
     btnZone.addEventListener("touchmove", (e) => {
       if (overlay.classList.contains("show")) return;
+      if (noPresses >= 4) return;
       const t = e.touches && e.touches[0];
       if (!t) return;
       evade(t.clientX, t.clientY);
     }, { passive:true });
 
-    // Clicking "No"
+    // NO click: always works, boosts yes + heartbeat
+    const noMessages = [
+      "Try again 😌",
+      "Your hand slipped… it happens 😭💗",
+      "You pressed No again? I’m impressed 😭💞",
+      "Nice attempt 😌💘",
+      "Mhm… you’re really committed 😂",
+      "I saw that 👀💕",
+      "You’re adorable, keep trying 😌🩷",
+      "Nope… try again, Valentine 😭🌹",
+      "That button is fighting for its life 😂💗"
+    ];
+
     noBtn.addEventListener("click", (e) => {
-      const x = e.clientX || (e.touches && e.touches[0]?.clientX) || (window.innerWidth/2);
-      const y = e.clientY || (e.touches && e.touches[0]?.clientY) || (window.innerHeight/2);
-      popAt(x,y);
-
-      // If not in catch window, it slips away and shows a message
-      if (!canBeCaught){
-        showToast("Almost 😭💞");
-        evade(x,y);
-        return;
-      }
-
-      // If caught: show a cute line, then still keep it playful
-      const msg = noMessages[Math.floor(Math.random()*noMessages.length)];
-      showToast(msg);
-      canBeCaught = false;
-
-      // After being caught, move a little (so it doesn't stay easy)
-      setTimeout(()=> evade(x,y), 120);
-    });
-
-    // ===== Yes flow
-    yesBtn.addEventListener("click", (e) => {
       const x = e.clientX || (window.innerWidth/2);
       const y = e.clientY || (window.innerHeight/2);
       popAt(x,y);
 
+      if (noPresses >= 4) return;
+
+      noPresses++;
+      setYesScale();
+      setNoOpacity();
+      updateHeartBeat();
+
+      if (noPresses === 4){
+        showToast("Plot Twist: No has decided to find its own Valentine. 💘");
+        noBtn.style.pointerEvents = "none";
+        setTarget(target.x + 140, target.y - 80);
+        setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
+        return;
+      }
+
+      showToast(noMessages[(noPresses - 1) % noMessages.length]);
+      setTimeout(() => evade(x,y), 120);
+    });
+
+    // YES click
+    yesBtn.addEventListener("click", (e) => {
+      popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
       overlay.classList.add("show");
       burstConfetti();
     });
 
     replayBtn.addEventListener("click", () => {
       overlay.classList.remove("show");
+      noPresses = 0;
+      yesBtn.style.setProperty("--yesScale", "1");
+      noBtn.style.setProperty("--noOpacity", "1");
+      noBtn.style.opacity = "1";
+      noBtn.style.pointerEvents = "auto";
+      updateHeartBeat();
+      setTimeout(placeNoNextToYes, 0);
     });
 
-    // ===== "Play me" (built-in tiny melody using Web Audio)
+    // Play me placeholder
     let audioCtx = null;
     function playLoveMelody(){
       try{
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         const ctx = audioCtx;
-
-        const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25]; // C5 D5 E5 G5 E5 D5 C5
+        const notes = [523.25, 587.33, 659.25, 783.99, 659.25, 587.33, 523.25];
         const now = ctx.currentTime;
 
         notes.forEach((freq, i) => {
@@ -604,13 +749,10 @@
 
           o.connect(g);
           g.connect(ctx.destination);
-
           o.start(now + i*0.18);
           o.stop(now + i*0.18 + 0.18);
         });
-      } catch (err){
-        // If audio blocked, just ignore
-      }
+      } catch (err){}
     }
 
     playBtn.addEventListener("click", () => {
@@ -618,9 +760,14 @@
       showToast("Playing 😌🎶");
     });
 
-    // ===== Init / keep button inside on resize
-    window.addEventListener("load", () => initNo());
-    window.addEventListener("resize", () => initNo());
+    // Init
+    window.addEventListener("load", () => {
+      updateHeartBeat();
+      setTimeout(placeNoNextToYes, 0);
+    });
+    window.addEventListener("resize", () => {
+      setTimeout(placeNoNextToYes, 0);
+    });
   </script>
 </body>
 </html>
