@@ -12,9 +12,8 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;color:var(--ink)}
-    html{scroll-behavior:smooth;}
     body{
-      overflow-x:hidden;
+      overflow:hidden;
       background:
         radial-gradient(1200px 800px at 20% 10%, var(--bg2), transparent 55%),
         radial-gradient(1000px 700px at 80% 20%, #ffeaf2, transparent 60%),
@@ -30,16 +29,7 @@
       100%{transform:translateY(-120vh) translateX(20px) rotate(18deg);opacity:0}
     }
 
-    .section{
-      min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:18px;
-      position:relative;
-      z-index:1;
-    }
-
+    .wrap{position:relative;height:100%;display:flex;align-items:center;justify-content:center;padding:18px;z-index:1}
     .card{
       width:min(620px,94vw);
       background:var(--card);
@@ -78,16 +68,6 @@
       position:relative;
       z-index:2;
       padding-top:8px;
-      /* IMPORTANT: keep NO inside this box */
-      width: fit-content;
-      margin: 0 auto;
-    }
-    /* when dodging starts, create a “play area” inside the row */
-    .row.dodge{
-      width: min(520px, 92vw);
-      height: 92px;
-      justify-content:center;
-      align-items:center;
     }
 
     button{
@@ -126,10 +106,10 @@
       50%{transform:scale(1.25)}
     }
 
-    /* NO stays INSIDE row when dodging */
+    /* NO moves around the SCREEN (not cramped in the row) */
     #noBtn.runaway{
-      position:absolute;     /* not fixed */
-      z-index:5;
+      position:fixed;     /* screen space */
+      z-index:9999;
       pointer-events:auto;
     }
 
@@ -145,20 +125,12 @@
       100%{transform:translateY(-120px) scale(1.35);opacity:0}
     }
 
-    /* -------- Vinyl section -------- */
-    .vinylWrap{
-      width:min(720px,94vw);
-      display:flex;
-      flex-direction:column;
-      gap:14px;
-      align-items:center;
+    /* Vinyl (same page, appears after YES; no auto-scroll) */
+    #vinylArea{
+      margin-top:18px;
+      display:none;
     }
-    .vinylTitle{
-      font-weight:1000;
-      font-size:20px;
-      opacity:.95;
-    }
-
+    #vinylArea.show{display:block;}
     #vinylCase{
       width:240px;
       height:160px;
@@ -176,6 +148,7 @@
       -webkit-tap-highlight-color:transparent;
       position:relative;
       overflow:hidden;
+      margin: 0 auto;
     }
     #vinylCase .label{
       font-weight:1000;
@@ -190,7 +163,6 @@
       opacity:.8;
       font-weight:800;
     }
-
     #lid{
       position:absolute;left:0;top:0;width:100%;height:100%;
       transform-origin:left center;
@@ -239,8 +211,7 @@
 <body>
   <div id="bgHearts"></div>
 
-  <!-- PAGE 1 -->
-  <section class="section" id="page1">
+  <div class="wrap">
     <div class="card">
       <div class="chip">💘 To the love of my life Sherkima</div>
       <h1>Will you be my Valentine?</h1>
@@ -252,23 +223,19 @@
         <button id="yesBtn">YES <span id="yesHeart">💝</span></button>
         <button id="noBtn">No 🙃</button>
       </div>
-    </div>
-  </section>
 
-  <!-- PAGE 2 -->
-  <section class="section" id="page2">
-    <div class="vinylWrap">
-      <div class="vinylTitle">One more thing… 😌🎶</div>
-      <div id="vinylCase" role="button" aria-label="Vinyl surprise">
-        <div class="label" id="vinylLabel">🎁 Click me for a surprise</div>
-        <div class="mini" id="vinylMini">I promise it’s cute.</div>
-        <div id="lid" aria-hidden="true"></div>
-        <div id="record" aria-hidden="true"></div>
+      <div id="vinylArea">
+        <p style="margin:14px 0 10px; font-weight:1000;">One more thing… 😌🎶</p>
+        <div id="vinylCase" role="button" aria-label="Vinyl surprise">
+          <div class="label" id="vinylLabel">🎁 Click me for a surprise</div>
+          <div class="mini" id="vinylMini">I promise it’s cute.</div>
+          <div id="lid" aria-hidden="true"></div>
+          <div id="record" aria-hidden="true"></div>
+        </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- audio file in repo root -->
   <audio id="audio" preload="auto">
     <source src="song.m4a" type="audio/mp4">
   </audio>
@@ -296,13 +263,13 @@
   const yesBtn = document.getElementById("yesBtn");
   const noBtn  = document.getElementById("noBtn");
   const yesHeart = document.getElementById("yesHeart");
-  const btnRow = document.getElementById("btnRow");
+  const audioEl = document.getElementById("audio");
 
+  const vinylArea = document.getElementById("vinylArea");
   const vinylCase = document.getElementById("vinylCase");
   const vinylLabel = document.getElementById("vinylLabel");
   const vinylMini = document.getElementById("vinylMini");
   const record = document.getElementById("record");
-  const audioEl = document.getElementById("audio");
 
   const noTexts = [
     "Wrong button 😌",
@@ -314,16 +281,144 @@
   ];
   let noCount = 0;
   const NO_LIMIT = 6;
+  let dodgeEnabled = false;
+
+  // NO physics (screen space)
+  let noX = null, noY = null;
+  let vx = 0, vy = 0;
+  let rafId = null;
+  let mouseX = window.innerWidth/2, mouseY = window.innerHeight/2;
 
   function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
 
-  // YES updates
+  function initNoFixedFromCurrent(){
+    const r = noBtn.getBoundingClientRect();
+    noX = r.left;
+    noY = r.top;
+    noBtn.classList.add("runaway");
+    noBtn.style.left = noX + "px";
+    noBtn.style.top  = noY + "px";
+  }
+
+  function setNoPos(x, y){
+    const pad = 10; // lets it get close to edges
+    const w = noBtn.offsetWidth || 170;
+    const h = noBtn.offsetHeight || 56;
+    const maxX = window.innerWidth  - w - pad;
+    const maxY = window.innerHeight - h - pad;
+    noX = clamp(x, pad, maxX);
+    noY = clamp(y, pad, maxY);
+    noBtn.style.left = noX + "px";
+    noBtn.style.top  = noY + "px";
+  }
+
   function updateYesEffects(){
-    const scale = 1 + (noCount * 0.14);
-    yesBtn.style.transform = `scale(${scale})`;
-    const duration = Math.max(0.30, 1.2 - (noCount * 0.18)); // faster speed-up
+    const scaleYes = 1 + (noCount * 0.14);
+    yesBtn.style.transform = `scale(${scaleYes})`;
+    const duration = Math.max(0.28, 1.2 - (noCount * 0.18));
     yesHeart.style.animationDuration = duration + "s";
   }
+
+  function updateNoEffects(){
+    // NO gets smaller each click
+    const scaleNo = Math.max(0.55, 1 - (noCount * 0.08));
+    noBtn.style.transform = `scale(${scaleNo})`;
+  }
+
+  window.addEventListener("mousemove", (e)=>{
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+  });
+
+  function startRunaway(){
+    if (rafId) return;
+
+    function step(){
+      if (noBtn.classList.contains("hidden")){
+        rafId = null;
+        return;
+      }
+      if (!dodgeEnabled){
+        rafId = requestAnimationFrame(step);
+        return;
+      }
+      if (noX === null) initNoFixedFromCurrent();
+
+      // speed increases as she clicks NO
+      const MAX_SPEED = 14 + (noCount * 2.2);    // faster each click
+      const FRICTION  = 0.84;                    // smooth
+      const TRIGGER   = 210;                     // runs when cursor gets close
+      const BOOST     = 1.35 + (noCount * 0.08); // stronger push each click
+
+      const w = noBtn.offsetWidth || 170;
+      const h = noBtn.offsetHeight || 56;
+      const bx = noX + w/2;
+      const by = noY + h/2;
+
+      const dx = bx - mouseX;
+      const dy = by - mouseY;
+      const dist = Math.max(1, Math.hypot(dx, dy));
+
+      if (dist < TRIGGER){
+        const strength = (TRIGGER - dist) / TRIGGER;
+        const ux = dx / dist;
+        const uy = dy / dist;
+        vx += ux * (MAX_SPEED * strength * BOOST);
+        vy += uy * (MAX_SPEED * strength * BOOST);
+      }
+
+      vx *= FRICTION;
+      vy *= FRICTION;
+
+      const vLen = Math.max(1, Math.hypot(vx, vy));
+      if (vLen > MAX_SPEED){
+        vx = (vx / vLen) * MAX_SPEED;
+        vy = (vy / vLen) * MAX_SPEED;
+      }
+
+      let nextX = noX + vx;
+      let nextY = noY + vy;
+
+      // keep on screen & bounce
+      const pad = 10;
+      const maxX = window.innerWidth  - w - pad;
+      const maxY = window.innerHeight - h - pad;
+      if (nextX < pad || nextX > maxX) { vx *= -0.65; nextX = clamp(nextX, pad, maxX); }
+      if (nextY < pad || nextY > maxY) { vy *= -0.65; nextY = clamp(nextY, pad, maxY); }
+
+      setNoPos(nextX, nextY);
+
+      rafId = requestAnimationFrame(step);
+    }
+    rafId = requestAnimationFrame(step);
+  }
+
+  // Start dodging only when she "targets" NO (like first versions)
+  noBtn.addEventListener("mouseenter", ()=>{
+    if (dodgeEnabled) return;
+    dodgeEnabled = true;
+    initNoFixedFromCurrent();
+    startRunaway();
+  });
+
+  noBtn.addEventListener("click", ()=>{
+    noCount++;
+    toast.textContent = noTexts[Math.min(noCount-1, noTexts.length-1)];
+    updateYesEffects();
+    updateNoEffects();
+
+    // enable dodge on first click too (mobile has no hover)
+    if (!dodgeEnabled){
+      dodgeEnabled = true;
+      initNoFixedFromCurrent();
+      startRunaway();
+    }
+
+    // after limit, hide no
+    if (noCount >= NO_LIMIT){
+      noBtn.classList.add("hidden");
+    }
+  });
 
   function burstHeartsFrom(el){
     const rect = el.getBoundingClientRect();
@@ -340,139 +435,14 @@
     }
   }
 
-  // ---------- NO stays inside row ----------
-  let dodgeEnabled = false;
-  let noX = 0, noY = 0;
-  let vx = 0, vy = 0;
-  let rafId = null;
-  let mouseX = 0, mouseY = 0;
-
-  function initNoAbsoluteInRow(){
-    // captures starting position next to YES and keeps it there until dodgeEnabled flips
-    const rr = btnRow.getBoundingClientRect();
-    const nr = noBtn.getBoundingClientRect();
-    noX = nr.left - rr.left;
-    noY = nr.top  - rr.top;
-    noBtn.classList.add("runaway");
-    noBtn.style.left = noX + "px";
-    noBtn.style.top  = noY + "px";
-  }
-
-  function setNoPosInRow(x, y){
-    const w = noBtn.offsetWidth || 170;
-    const h = noBtn.offsetHeight || 56;
-    const pad = 6;
-    const maxX = btnRow.clientWidth  - w - pad;
-    const maxY = btnRow.clientHeight - h - pad;
-    noX = clamp(x, pad, Math.max(pad, maxX));
-    noY = clamp(y, pad, Math.max(pad, maxY));
-    noBtn.style.left = noX + "px";
-    noBtn.style.top  = noY + "px";
-  }
-
-  function startDodgeEngine(){
-    if (rafId) return;
-    const MAX_SPEED = 16;   // faster than before
-    const FRICTION  = 0.82; // less friction = quicker movement
-    const TRIGGER   = 175;  // runs away sooner
-    const BOOST     = 1.25; // stronger push away
-
-    function step(){
-      if (noBtn.classList.contains("hidden")){
-        rafId = null;
-        return;
-      }
-      if (!dodgeEnabled){
-        rafId = requestAnimationFrame(step);
-        return;
-      }
-
-      const w = noBtn.offsetWidth || 170;
-      const h = noBtn.offsetHeight || 56;
-
-      // mouse position relative to row
-      const rr = btnRow.getBoundingClientRect();
-      const mx = mouseX - rr.left;
-      const my = mouseY - rr.top;
-
-      const bx = noX + w/2;
-      const by = noY + h/2;
-      const dx = bx - mx;
-      const dy = by - my;
-      const dist = Math.max(1, Math.hypot(dx, dy));
-
-      if (dist < TRIGGER){
-        const strength = (TRIGGER - dist) / TRIGGER; // 0..1
-        const ux = dx / dist;
-        const uy = dy / dist;
-        vx += ux * (MAX_SPEED * strength * BOOST);
-        vy += uy * (MAX_SPEED * strength * BOOST);
-      }
-
-      vx *= FRICTION;
-      vy *= FRICTION;
-
-      const vLen = Math.max(1, Math.hypot(vx, vy));
-      if (vLen > MAX_SPEED){
-        vx = (vx / vLen) * MAX_SPEED;
-        vy = (vy / vLen) * MAX_SPEED;
-      }
-
-      setNoPosInRow(noX + vx, noY + vy);
-
-      // gentle bounce on edges by flipping velocity when we hit bounds
-      const pad = 6;
-      const maxX = btnRow.clientWidth  - w - pad;
-      const maxY = btnRow.clientHeight - h - pad;
-      if (noX <= pad || noX >= maxX) vx *= -0.55;
-      if (noY <= pad || noY >= maxY) vy *= -0.55;
-
-      rafId = requestAnimationFrame(step);
-    }
-    rafId = requestAnimationFrame(step);
-  }
-
-  // Track mouse always (desktop)
-  window.addEventListener("mousemove", (e)=>{
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-  });
-
-  // Enable dodge ONLY after the first NO click or first hover attempt
-  function enableDodge(){
-    if (dodgeEnabled) return;
-    dodgeEnabled = true;
-    btnRow.classList.add("dodge");      // create a bounded play area
-    initNoAbsoluteInRow();              // lock NO into row coordinates
-    startDodgeEngine();
-  }
-
-  // Desktop: start dodging when the cursor gets close to the NO button
-  noBtn.addEventListener("mouseenter", ()=>{
-    enableDodge();
-  });
-
-  // Click NO: show text, grow YES, then dodge (and allow clicking up to 6 times)
-  noBtn.addEventListener("click", ()=>{
-    noCount++;
-    toast.textContent = noTexts[Math.min(noCount-1, noTexts.length-1)];
-    updateYesEffects();
-    enableDodge();
-
-    if (noCount >= NO_LIMIT){
-      noBtn.classList.add("hidden");
-    }
-  });
-
-  // YES click: hearts + scroll down
   yesBtn.addEventListener("click", ()=>{
     burstHeartsFrom(yesBtn);
     toast.textContent = "Yessss 😌💗 Smart choice. I knew you were my Valentine.";
     yesHeart.style.animation = "none";
-    document.getElementById("page2").scrollIntoView({behavior:"smooth"});
+    vinylArea.classList.add("show");   // appears like the first vibe (no auto-scroll)
   });
 
-  // Vinyl: click -> remove label -> open -> slide + spin record -> notes + play song
+  // Vinyl click: remove prompt, open, slide record, spin, notes, play
   let notesTimer = null;
   function startNotes(){
     if (notesTimer) return;
@@ -498,11 +468,9 @@
     try{ await audioEl.play(); } catch(e){ /* ignore */ }
   });
 
-  // Keep NO correctly bounded if the layout changes (rotation)
   window.addEventListener("resize", ()=>{
-    if (!dodgeEnabled) return;
-    // recalc bounds by clamping current position
-    setNoPosInRow(noX, noY);
+    if (!dodgeEnabled || noX === null) return;
+    setNoPos(noX, noY);
   });
 </script>
 </body>
