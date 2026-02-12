@@ -403,9 +403,7 @@
     @keyframes heartVanish{ to { transform: scale(.5); opacity:0; } }
 
     /* Chaos shake (rare 5%) */
-    .shake {
-      animation: shake .5s ease-in-out 2;
-    }
+    .shake { animation: shake .5s ease-in-out 2; }
     @keyframes shake{
       0%{ transform: translate(0,0); }
       20%{ transform: translate(8px,-6px); }
@@ -413,6 +411,71 @@
       60%{ transform: translate(7px,5px); }
       80%{ transform: translate(-7px,-5px); }
       100%{ transform: translate(0,0); }
+    }
+
+    /* 👑 Owner/Admin panel */
+    .ownerPanel{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      width:min(320px, calc(100% - 28px));
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,79,163,.22);
+      border-radius:18px;
+      box-shadow: 0 18px 50px rgba(255,79,163,.22);
+      backdrop-filter: blur(10px);
+      padding:12px;
+      display:none;
+      z-index:5000;
+      text-align:left;
+    }
+    .ownerPanel.show{ display:block; }
+    .ownerTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .ownerTitle{
+      font-weight:950;
+      color:#6b2c53;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+    }
+    .ownerHint{
+      font-size:12px;
+      color: rgba(107,58,90,.78);
+      margin-top:-6px;
+      margin-bottom:10px;
+    }
+    .ownerGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+    }
+    .ownerBtn{
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,79,163,.20);
+      background: linear-gradient(135deg, rgba(255,79,163,.12), rgba(255,119,183,.12));
+      color:#5b1630;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:none;
+    }
+    .ownerBtn:active{ transform: scale(.98); }
+    .ownerClose{
+      border:0;
+      background: rgba(255,79,163,.10);
+      color:#6b2c53;
+      font-weight:950;
+      border-radius:12px;
+      padding:8px 10px;
+      cursor:pointer;
+      box-shadow:none;
     }
 
     @media (max-width:420px){
@@ -482,6 +545,24 @@
     </div>
   </div>
 
+  <!-- 👑 Owner/Admin Panel (hidden unless you activate it) -->
+  <div class="ownerPanel" id="ownerPanel">
+    <div class="ownerTop">
+      <div class="ownerTitle">👑 Owner Mode</div>
+      <button type="button" class="ownerClose" id="ownerClose">Close</button>
+    </div>
+    <div class="ownerHint">Tap an ending to <b>force the next YES</b>. Auto-resets after it triggers.</div>
+
+    <div class="ownerGrid">
+      <button type="button" class="ownerBtn" data-force="normal">Normal 💖</button>
+      <button type="button" class="ownerBtn" data-force="minigame">Mini-game 💘</button>
+      <button type="button" class="ownerBtn" data-force="tease">Tease 😏</button>
+      <button type="button" class="ownerBtn" data-force="destiny">Destiny 🌟</button>
+      <button type="button" class="ownerBtn" data-force="chaos">Chaos 😂</button>
+      <button type="button" class="ownerBtn" data-force="commitment">Commitment 💍</button>
+    </div>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", () => {
       const bg = document.getElementById("bg");
@@ -501,12 +582,77 @@
       const heartScoreEl = document.getElementById("heartScore");
       const successCard = document.getElementById("successCard");
 
+      // 👑 Owner/Admin
+      const ownerPanel = document.getElementById("ownerPanel");
+      const ownerClose = document.getElementById("ownerClose");
+      const ownerBtns = document.querySelectorAll(".ownerBtn");
+
       // NOTE: Audio logic is NOT added yet (per your request).
 
-      if (!bg || !noBtn || !yesBtn || !btnZone || !overlay || !replayBtn || !surpriseBtn || !surpriseWrap || !toast || !yesTitle || !yesLine || !miniGame || !heartArena || !heartScoreEl || !successCard) {
+      if (!bg || !noBtn || !yesBtn || !btnZone || !overlay || !replayBtn || !surpriseBtn || !surpriseWrap || !toast || !yesTitle || !yesLine || !miniGame || !heartArena || !heartScoreEl || !successCard || !ownerPanel || !ownerClose) {
         console.log("Missing element(s). Check IDs in HTML.");
         return;
       }
+
+      // ===== Owner mode state =====
+      let forcedNext = null; // "normal" | "minigame" | "tease" | "destiny" | "chaos" | "commitment"
+
+      function openOwner(){
+        ownerPanel.classList.add("show");
+        showToast("👑 Owner Mode");
+      }
+      function closeOwner(){
+        ownerPanel.classList.remove("show");
+      }
+      function setForced(mode){
+        forcedNext = mode;
+        closeOwner();
+        const label = ({
+          normal:"Normal 💖",
+          minigame:"Mini-game 💘",
+          tease:"Tease 😏",
+          destiny:"Destiny 🌟",
+          chaos:"Chaos 😂",
+          commitment:"Commitment 💍"
+        })[mode] || "Mode";
+        showToast(`👑 Next YES: ${label}`);
+      }
+
+      ownerClose.addEventListener("click", closeOwner);
+      ownerBtns.forEach(btn => {
+        btn.addEventListener("click", () => setForced(btn.getAttribute("data-force")));
+      });
+
+      // Laptop activation: Ctrl + Shift + A
+      document.addEventListener("keydown", (e) => {
+        if (e.ctrlKey && e.shiftKey && (e.key === "A" || e.key === "a")) {
+          e.preventDefault();
+          openOwner();
+        }
+      });
+
+      // Phone activation: 3-finger long press (2s) on background/body (not on buttons)
+      let threeTouchTimer = null;
+      function clearThreeTouch(){
+        if (threeTouchTimer) clearTimeout(threeTouchTimer);
+        threeTouchTimer = null;
+      }
+      document.addEventListener("touchstart", (e) => {
+        // Don't activate if touching buttons/inputs
+        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
+        if (tag === "button" || tag === "input" || tag === "textarea" || tag === "select") return;
+
+        if (e.touches && e.touches.length === 3) {
+          clearThreeTouch();
+          threeTouchTimer = setTimeout(() => {
+            openOwner();
+            // no vibration / nothing loud
+          }, 2000);
+        }
+      }, { passive:true });
+
+      document.addEventListener("touchend", clearThreeTouch, { passive:true });
+      document.addEventListener("touchcancel", clearThreeTouch, { passive:true });
 
       const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
       const zoneRect = () => btnZone.getBoundingClientRect();
@@ -835,7 +981,6 @@
 
       // ===== Chaos helpers (5%) =====
       function chaosBurst(){
-        // shake the card + spam hearts
         successCard.classList.remove("shake");
         void successCard.offsetWidth;
         successCard.classList.add("shake");
@@ -849,19 +994,13 @@
         showToast("BROOO YOU GOT THE CHAOS ENDING 😭💘");
       }
 
-      // ===== YES click with probabilities =====
-      yesBtn.addEventListener("click", (e) => {
-        popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
-
-        overlay.classList.add("show");
-        surpriseWrap.classList.remove("show");
+      // ===== Ending renderer (shared by random + forced) =====
+      function runEnding(mode){
         stopHeartGame();
+        surpriseWrap.classList.remove("show");
         burstConfetti(1);
 
-        const roll = Math.random() * 100;
-
-        // 1% B — commitment hint (0 to <1)
-        if (roll < 1) {
+        if (mode === "commitment") {
           yesTitle.textContent = "Hold on… 💍";
           yesLine.textContent = "Don’t get used to clicking yes so easily… one day this might be the real question 😌";
           showToast("You unlocked the 1% ending 😭💍");
@@ -869,39 +1008,35 @@
           return;
         }
 
-        // 5% C — chaos funny ending (1 to <6)
-        if (roll < 6) {
+        if (mode === "chaos") {
           yesTitle.textContent = "NAH YOU REALLY SAID YES 😂💖";
           yesLine.textContent = "You just unlocked the chaos ending. I’m never letting you live this down 😭💘";
           chaosBurst();
           return;
         }
 
-        // 15% mini-game (6 to <21)
-        if (roll < 21) {
+        if (mode === "minigame") {
           yesTitle.textContent = "Bonus round 😌💘";
           yesLine.textContent = "Catch the heart before it runs away.";
           startHeartGame();
           return;
         }
 
-        // 10% tease mode (21 to <31)
-        if (roll < 31) {
+        if (mode === "tease") {
           yesTitle.textContent = "You had one job… 😏💘";
           yesLine.textContent = "Clicking yes that fast? Yeah… you’re not escaping me now 😌";
           burstConfetti(1.2);
           return;
         }
 
-        // 7% destiny (31 to <38)
-        if (roll < 38) {
+        if (mode === "destiny") {
           yesTitle.textContent = "This felt meant to be 🌟";
           yesLine.textContent = "Like… you were always going to choose me 😌💞";
           showToast("Destiny mode 🌟");
           return;
         }
 
-        // 62% normal (38 to 100)
+        // normal
         if (noPresses === 0){
           yesTitle.textContent = "Awww you pressed it on the first try 😭💖";
           yesLine.textContent = "That was too easy… but I’m not complaining 😌🌹";
@@ -909,6 +1044,43 @@
           yesTitle.textContent = "You said YESSS 💖";
           yesLine.textContent = "I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹";
         }
+      }
+
+      // ===== YES click with probabilities + Owner forced mode =====
+      yesBtn.addEventListener("click", (e) => {
+        popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
+
+        overlay.classList.add("show");
+        closeOwner(); // if open, hide it
+        stopHeartGame();
+
+        // 👑 If you forced an ending, use it ONCE then reset
+        if (forcedNext) {
+          const mode = forcedNext;
+          forcedNext = null; // auto-reset after it triggers
+          runEnding(mode);
+          return;
+        }
+
+        const roll = Math.random() * 100;
+
+        // 1% commitment (0 to <1)
+        if (roll < 1) return runEnding("commitment");
+
+        // 5% chaos (1 to <6)
+        if (roll < 6) return runEnding("chaos");
+
+        // 15% mini-game (6 to <21)
+        if (roll < 21) return runEnding("minigame");
+
+        // 10% tease (21 to <31)
+        if (roll < 31) return runEnding("tease");
+
+        // 7% destiny (31 to <38)
+        if (roll < 38) return runEnding("destiny");
+
+        // 62% normal (38 to 100)
+        return runEnding("normal");
       });
 
       // Surprise: show vinyl
@@ -917,10 +1089,11 @@
         showToast("Okayyy… here’s the surprise 😌🎶");
       });
 
-      // Back to main page
+      // Back to main page (no audio stop yet)
       replayBtn.addEventListener("click", () => {
         stopHeartGame();
         overlay.classList.remove("show");
+        closeOwner();
 
         noPresses = 0;
         yesBtn.style.setProperty("--yesScale", "1");
