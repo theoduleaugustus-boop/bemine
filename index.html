@@ -37,7 +37,50 @@
       position:fixed; inset:0;
       background: radial-gradient(1200px 700px at 50% 35%, transparent 55%, rgba(255,45,85,.08) 100%);
       pointer-events:none;
+      z-index:1;
     }
+
+    /* Ending tint layer */
+    #tintLayer{
+      position:fixed; inset:0;
+      pointer-events:none;
+      opacity:0;
+      transition: opacity .45s ease;
+      z-index:2;
+    }
+    #tintLayer.on{ opacity:1; }
+
+    #tintLayer.mode-commitment{
+      background:
+        radial-gradient(1100px 700px at 50% 35%, rgba(255,215,120,.28), transparent 60%),
+        radial-gradient(900px 600px at 18% 18%, rgba(255,200,120,.18), transparent 55%),
+        linear-gradient(180deg, rgba(255,245,230,.15), rgba(255,214,140,.10));
+    }
+    #tintLayer.mode-chaos{
+      background:
+        radial-gradient(900px 600px at 40% 25%, rgba(255,79,163,.22), transparent 58%),
+        radial-gradient(900px 600px at 90% 40%, rgba(255,45,85,.16), transparent 60%),
+        linear-gradient(180deg, rgba(255,246,251,.05), rgba(255,190,220,.10));
+    }
+    #tintLayer.mode-minigame{
+      background:
+        radial-gradient(900px 600px at 50% 25%, rgba(255,119,183,.18), transparent 60%),
+        linear-gradient(180deg, rgba(255,246,251,.05), rgba(255,220,235,.10));
+    }
+    #tintLayer.mode-tease{
+      background:
+        radial-gradient(900px 600px at 50% 25%, rgba(255,45,85,.16), transparent 60%),
+        radial-gradient(900px 600px at 15% 60%, rgba(107,58,90,.10), transparent 65%),
+        linear-gradient(180deg, rgba(255,246,251,.03), rgba(255,200,225,.10));
+    }
+    #tintLayer.mode-destiny{
+      background:
+        radial-gradient(1100px 700px at 50% 35%, rgba(255,255,255,.38), transparent 62%),
+        linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,240,248,.08));
+    }
+
+    body.legendary .wrap,
+    body.legendary .bg{ filter: blur(0.8px); opacity:.96; }
 
     .bg{
       position:fixed; inset:0;
@@ -82,7 +125,7 @@
       display:grid;
       place-items:center;
       padding:18px;
-      z-index:1;
+      z-index:3;
     }
 
     .card{
@@ -195,7 +238,7 @@
       font-weight: 900;
       font-size: 14px;
       color: #6b2c53;
-      box-shadow: 0 14px 30px rgba(255,79,163,.18));
+      box-shadow: 0 14px 30px rgba(255,79,163,.18);
       opacity:0;
       pointer-events:none;
       transition: opacity .25s ease, transform .25s ease;
@@ -225,6 +268,7 @@
       to{ transform: translateY(-60px) scale(1.12); opacity:0; }
     }
 
+    /* Overlay */
     .overlay{
       position:fixed; inset:0;
       display:none;
@@ -274,6 +318,69 @@
       font-weight:900;
     }
 
+    /* Confetti + stars + gold */
+    .confetti{
+      position:fixed;
+      width:10px; height:16px;
+      top:-20px;
+      border-radius:4px;
+      opacity:.95;
+      pointer-events:none;
+      animation: confFall linear forwards;
+      z-index:1000;
+    }
+    @keyframes confFall{
+      to{ transform: translateY(120vh) rotate(720deg); opacity:0.95; }
+    }
+    .star{
+      position:fixed;
+      top:-20px;
+      font-size:14px;
+      opacity:.9;
+      pointer-events:none;
+      animation: starFall linear forwards;
+      z-index:1000;
+      filter: drop-shadow(0 10px 14px rgba(255,255,255,.18));
+    }
+    @keyframes starFall{
+      to{ transform: translateY(120vh) rotate(420deg); opacity:0.9; }
+    }
+    .gold{
+      position:fixed;
+      width:6px; height:6px;
+      border-radius:50%;
+      top: 105vh;
+      opacity:.85;
+      pointer-events:none;
+      background: radial-gradient(circle, rgba(255,245,210,1), rgba(255,210,120,.85));
+      box-shadow: 0 0 18px rgba(255,210,120,.22);
+      animation: goldRise linear forwards;
+      z-index:1100;
+    }
+    @keyframes goldRise{
+      to{
+        transform: translateY(-140vh) translateX(var(--dx)) scale(var(--s));
+        opacity:0;
+      }
+    }
+
+    /* Mini-game */
+    #miniGame{ display:none; margin-top:10px; }
+    #heartArena{ position:relative; width:min(520px, 100%); height:180px; margin:0 auto; }
+    .gameHeart{
+      position:absolute;
+      font-size:34px;
+      cursor:pointer;
+      user-select:none;
+      filter: drop-shadow(0 12px 14px rgba(255,79,163,.22));
+      transform: scale(.9);
+      animation: heartPop .18s ease-out forwards;
+    }
+    @keyframes heartPop{ to { transform: scale(1); } }
+    .gameHeart.vanish{ animation: heartVanish .18s ease-in forwards; }
+    @keyframes heartVanish{ to { transform: scale(.5); opacity:0; } }
+
+    /* Vinyl surprise */
     .surpriseWrap{ display:none; margin:10px auto 14px; width:min(560px, 100%); }
     .surpriseWrap.show{ display:block; }
 
@@ -285,7 +392,6 @@
       display:grid;
       place-items:center;
     }
-
     .sleeve{
       width:260px; height:190px;
       border-radius:18px;
@@ -297,7 +403,6 @@
       position:relative;
       overflow:hidden;
     }
-
     .sleeveLabel{
       position:absolute;
       left:16px; bottom:14px;
@@ -309,7 +414,6 @@
       padding:8px 10px;
       border-radius:999px;
     }
-
     .record{
       width:170px; height:170px;
       border-radius:50%;
@@ -331,7 +435,6 @@
       background: radial-gradient(circle, #fff 0 18px, #ff4fa3 19px 62%, #ffb703 63% 100%);
       opacity:.85;
     }
-
     .surpriseWrap.show .record{
       animation: slideOut .85s ease forwards, spin 2.4s linear infinite .85s;
     }
@@ -342,7 +445,6 @@
     @keyframes spin {
       to { transform: translate(-50%,-50%) translateX(92px) translateY(-2px) rotate(360deg); }
     }
-
     .note{
       position:absolute;
       font-size:18px;
@@ -359,6 +461,54 @@
       100%{ transform: translate(0,0) rotate(0deg); }
     }
 
+    /* Owner/Admin panel */
+    .ownerPanel{
+      position:fixed;
+      right:14px;
+      bottom:14px;
+      width:min(320px, calc(100% - 28px));
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(255,79,163,.22);
+      border-radius:18px;
+      box-shadow: 0 18px 50px rgba(255,79,163,.22);
+      backdrop-filter: blur(10px);
+      padding:12px;
+      display:none;
+      z-index:5000;
+      text-align:left;
+    }
+    .ownerPanel.show{ display:block; }
+    .ownerTop{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .ownerTitle{ font-weight:950; color:#6b2c53; display:flex; align-items:center; gap:8px; }
+    .ownerHint{ font-size:12px; color: rgba(107,58,90,.78); margin-top:-6px; margin-bottom:10px; }
+    .ownerGrid{ display:grid; grid-template-columns: 1fr 1fr; gap:8px; }
+    .ownerBtn{
+      padding:10px 10px;
+      border-radius:14px;
+      border:1px solid rgba(255,79,163,.20);
+      background: linear-gradient(135deg, rgba(255,79,163,.12), rgba(255,119,183,.12));
+      color:#5b1630;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:none;
+    }
+    .ownerClose{
+      border:0;
+      background: rgba(255,79,163,.10);
+      color:#6b2c53;
+      font-weight:950;
+      border-radius:12px;
+      padding:8px 10px;
+      cursor:pointer;
+      box-shadow:none;
+    }
+
     @media (max-width:420px){
       button{ width:150px; }
       .btn-zone{ height:210px; }
@@ -369,6 +519,7 @@
 </head>
 <body>
   <div class="bg" id="bg"></div>
+  <div id="tintLayer"></div>
 
   <div class="wrap">
     <div class="card">
@@ -387,9 +538,19 @@
   </div>
 
   <div class="overlay" id="overlay">
-    <div class="success">
+    <div class="success" id="successCard">
       <h2 id="yesTitle">You said YESSS 💖</h2>
       <p id="yesLine">I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹</p>
+
+      <div id="miniGame">
+        <div style="font-weight:900; color:#6b2c53; margin-bottom:8px;">
+          Catch the heart 😌💘 <span id="heartScore">0</span>
+        </div>
+        <div id="heartArena"></div>
+        <div style="font-size:12px; color:rgba(107,58,90,.75); margin-top:8px;">
+          (It gets faster every time you catch it.)
+        </div>
+      </div>
 
       <div class="actions">
         <button type="button" class="btn3" id="surpriseBtn">Press me 😌💝</button>
@@ -412,39 +573,91 @@
     </div>
   </div>
 
+  <div class="ownerPanel" id="ownerPanel">
+    <div class="ownerTop">
+      <div class="ownerTitle">👑 Owner Mode</div>
+      <button type="button" class="ownerClose" id="ownerClose">Close</button>
+    </div>
+    <div class="ownerHint">Tap an ending to <b>force the next YES</b>. Auto-resets after it triggers.</div>
+
+    <div class="ownerGrid">
+      <button type="button" class="ownerBtn" data-force="normal">Normal 💖</button>
+      <button type="button" class="ownerBtn" data-force="minigame">Mini-game 💘</button>
+      <button type="button" class="ownerBtn" data-force="tease">Tease 😏</button>
+      <button type="button" class="ownerBtn" data-force="destiny">Destiny 🌟</button>
+      <button type="button" class="ownerBtn" data-force="chaos">Chaos 😂</button>
+      <button type="button" class="ownerBtn" data-force="commitment">Commitment 💍</button>
+    </div>
+  </div>
+
+  <!-- music placeholder (we wire it later) -->
+  <audio id="ourSong" src="our-song.mp3"></audio>
+
   <script>
      document.addEventListener("DOMContentLoaded", () => {
-
       const bg = document.getElementById("bg");
+      const tintLayer = document.getElementById("tintLayer");
+
       const noBtn = document.getElementById("noBtn");
       const yesBtn = document.getElementById("yesBtn");
       const btnZone = document.getElementById("btnZone");
+
       const overlay = document.getElementById("overlay");
       const replayBtn = document.getElementById("replayBtn");
       const surpriseBtn = document.getElementById("surpriseBtn");
       const surpriseWrap = document.getElementById("surpriseWrap");
+
       const toast = document.getElementById("toast");
       const yesTitle = document.getElementById("yesTitle");
       const yesLine = document.getElementById("yesLine");
 
-      const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+      const miniGame = document.getElementById("miniGame");
+      const heartArena = document.getElementById("heartArena");
+      const heartScoreEl = document.getElementById("heartScore");
+
+      const ownerPanel = document.getElementById("ownerPanel");
+      const ownerClose = document.getElementById("ownerClose");
+      const ownerBtns = Array.from(document.querySelectorAll(".ownerBtn"));
+
+      const mainTitle = document.querySelector("h1");
+
+      if (!bg || !tintLayer || !noBtn || !yesBtn || !btnZone || !overlay || !replayBtn || !surpriseBtn || !surpriseWrap || !toast || !yesTitle || !yesLine || !miniGame || !heartArena || !heartScoreEl || !ownerPanel || !ownerClose || !mainTitle) return;
+
+      const clamp = (n, a, b) => Math.max(a, Math.min(b, n));
       const zoneRect = () => btnZone.getBoundingClientRect();
 
       const heartGlyphs = ["💗","💖","💘","💕","💞","❤️","🩷"];
+      const chaosLines = [
+        "I pressed YES for you mentally like 10 times 😭💖",
+        "Congratulations. You unlocked: *My Heart* 😌💘",
+        "Ok fine… you got me. I’m yours 💞",
+        "YES detected. Cute overload initiated 🩷",
+      ];
+      const teaseLines = [
+        "You really thought you had a choice? 😏💘",
+        "Now look at you… being adorable on purpose 😌💕",
+        "Good. I like obedient Valentines 😭💗",
+        "That YES looked suspiciously confident 😏🌹",
+      ];
+      const destinyLines = [
+        "It was always you. Always us. 🌟💞",
+        "Some things are written… like this YES 😌💖",
+        "Destiny said: stop playing and love each other 😭💘",
+      ];
 
       function showToast(text){
         toast.textContent = text;
         toast.classList.add("show");
         clearTimeout(showToast._t);
-        showToast._t = setTimeout(()=> toast.classList.remove("show"), 1400);
+        showToast._t = setTimeout(()=> toast.classList.remove("show"), 1500);
       }
 
       function popAt(x,y){
         const el = document.createElement("div");
         el.className = "pop";
         el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
-        el.style.left = x + "px";
-        el.style.top  = y + "px";
+        el.style.left = (x + (Math.random()*16-8)) + "px";
+        el.style.top  = (y + (Math.random()*16-8)) + "px";
         document.body.appendChild(el);
         setTimeout(()=>el.remove(), 900);
       }
@@ -453,21 +666,17 @@
         const el = document.createElement("div");
         el.className = "float-heart";
         el.textContent = heartGlyphs[Math.floor(Math.random()*heartGlyphs.length)];
-
         const x = Math.random()*100;
         const s = 0.65 + Math.random()*1.0;
         const drift = (-35 + Math.random()*70) + "vw";
         const dur = 7 + Math.random()*8;
-
         el.style.setProperty("--x", x + "vw");
         el.style.setProperty("--s", s.toFixed(2));
         el.style.setProperty("--drift", drift);
         el.style.animationDuration = dur + "s";
-
         bg.appendChild(el);
         setTimeout(() => el.remove(), dur*1000);
       }
-
       function spawnSparkle(){
         const el = document.createElement("div");
         el.className = "sparkle";
@@ -481,12 +690,11 @@
       setInterval(() => {
         if (overlay.classList.contains("show")) return;
         spawnBgHeart();
-        if (Math.random() < 0.6) spawnBgHeart();
+        if (Math.random() < 0.60) spawnBgHeart();
         if (Math.random() < 0.55) spawnSparkle();
       }, 520);
 
-      // ---- Yes growth & heartbeat ----
-
+      // ---- YES heart beat control ----
       let noPresses = 0;
       let noReturnGraceUntil = 0;
 
@@ -496,19 +704,16 @@
         yesBtn.style.setProperty("--beatScale", scale.toFixed(2));
         yesBtn.style.setProperty("--beatSpeed", speed.toFixed(2) + "s");
       }
-
       function setYesScale(){
         const scale = 1 + (noPresses * 0.08);
         yesBtn.style.setProperty("--yesScale", scale.toFixed(2));
       }
-
       function setNoOpacity(){
         const op = Math.max(0.12, 1 - (noPresses * 0.22));
         noBtn.style.setProperty("--noOpacity", op.toFixed(2));
       }
 
       // ---- Smooth NO movement ----
-
       let noPos = { x: 0, y: 0 };
       let target = { x: 0, y: 0 };
       let animing = false;
@@ -517,47 +722,35 @@
         const zr = zoneRect();
         const bw = noBtn.offsetWidth;
         const bh = noBtn.offsetHeight;
-
-        const minX = 10;
-        const minY = 10;
+        const minX = 10, minY = 10;
         const maxX = zr.width - bw - 10;
         const maxY = zr.height - bh - 10;
-
         target.x = clamp(x, minX, maxX);
         target.y = clamp(y, minY, maxY);
-
         if (!animing) smoothStep();
       }
 
       function smoothStep(){
         animing = true;
-
-        const ease = 0.11;
-
+        const ease = 0.11; // smooth + catchable
         noPos.x += (target.x - noPos.x) * ease;
         noPos.y += (target.y - noPos.y) * ease;
-
         noBtn.style.left = noPos.x + "px";
         noBtn.style.top  = noPos.y + "px";
-
         const dx = target.x - noPos.x;
         const dy = target.y - noPos.y;
-
         if (Math.hypot(dx,dy) < 0.6){
-          noPos.x = target.x;
-          noPos.y = target.y;
+          noPos.x = target.x; noPos.y = target.y;
           noBtn.style.left = noPos.x + "px";
           noBtn.style.top  = noPos.y + "px";
           animing = false;
           return;
         }
-
         requestAnimationFrame(smoothStep);
       }
 
       function placeNoNextToYes(){
         const zr = zoneRect();
-
         const yesX = yesBtn.offsetLeft;
         const yesY = yesBtn.offsetTop;
         const gap = 16;
@@ -568,8 +761,7 @@
         const bw = noBtn.offsetWidth;
         const bh = noBtn.offsetHeight;
 
-        const minX = 10;
-        const minY = 10;
+        const minX = 10, minY = 10;
         const maxX = zr.width - bw - 10;
         const maxY = zr.height - bh - 10;
 
@@ -582,7 +774,8 @@
         noBtn.style.left = startX + "px";
         noBtn.style.top  = startY + "px";
       }
-        function evade(pointerX, pointerY){
+
+      function evade(pointerX, pointerY){
         if (noPresses >= 4) return;
         if (Date.now() < noReturnGraceUntil) return;
 
@@ -604,7 +797,7 @@
         setTarget(rx, ry);
       }
 
-      // Desktop: move away when close
+      // ---- NO hover/touch move-away (with hearts) ----
       document.addEventListener("mousemove", (e) => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
@@ -616,7 +809,6 @@
         if (dist < 92) evade(mx, my);
       }, { passive:true });
 
-      // Hearts only when you actually hit NO
       noBtn.addEventListener("mouseenter", () => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
@@ -625,12 +817,10 @@
         const r = noBtn.getBoundingClientRect();
         const x = r.left + r.width/2;
         const y = r.top + r.height/2;
-
         popAt(x,y);
         evade(x,y);
       });
 
-      // Mobile: move away on touch
       noBtn.addEventListener("touchstart", (e) => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
@@ -638,7 +828,6 @@
 
         const t = e.touches && e.touches[0];
         if (!t) return;
-
         popAt(t.clientX, t.clientY);
         evade(t.clientX, t.clientY);
         e.preventDefault();
@@ -666,11 +855,161 @@
         "That button is fighting for its life 😂💗"
       ];
 
-      // NO click handler (with 30% return)
+      // ---- Owner/Admin ----
+      let forcedEnding = null;
+
+      function openOwner(){
+        ownerPanel.classList.add("show");
+        showToast("👑 Owner Mode: choose an ending");
+      }
+      function closeOwner(){
+        ownerPanel.classList.remove("show");
+      }
+
+      ownerClose.addEventListener("click", closeOwner);
+      ownerBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          forcedEnding = btn.dataset.force || null;
+          showToast(`Next YES forced: ${forcedEnding}`);
+          closeOwner();
+        });
+      });
+
+      // Desktop: Ctrl + Shift + O
+      document.addEventListener("keydown", (e) => {
+        const key = (e.key || "").toLowerCase();
+        if (e.ctrlKey && e.shiftKey && key === "o") openOwner();
+      });
+
+      // Phone: long-press the title (Easter egg for you)
+      let lpTimer = null;
+      mainTitle.addEventListener("touchstart", () => {
+        lpTimer = setTimeout(openOwner, 900);
+      }, { passive:true });
+      mainTitle.addEventListener("touchend", () => clearTimeout(lpTimer), { passive:true });
+      mainTitle.addEventListener("touchcancel", () => clearTimeout(lpTimer), { passive:true });
+
+      // ---- Endings system + pity ----
+      // Base chances (without pity): minigame 15%, chaos 5%, tease 25%, destiny 10%, commitment 1% (pity increases to max 10%), normal = remainder
+      let pityStacks = 0; // increases commitment chance invisibly
+      const PITY_CAP = 0.10; // 10%
+      const BASE_COMMIT = 0.01;
+
+      function commitmentChance(){
+        const extra = Math.min(pityStacks * 0.01, PITY_CAP - BASE_COMMIT);
+        return clamp(BASE_COMMIT + extra, BASE_COMMIT, PITY_CAP);
+      }
+
+      function pickEnding(){
+        if (forcedEnding){
+          const pick = forcedEnding;
+          forcedEnding = null; // auto-reset after trigger
+          return pick;
+        }
+
+        const pCommit = commitmentChance();
+        const r = Math.random();
+
+        // Weighted pick:
+        // commitment pCommit
+        // chaos 0.05
+        // minigame 0.15
+        // tease 0.25
+        // destiny 0.10
+        // normal rest
+
+        let t = 0;
+        t += pCommit; if (r < t) return "commitment";
+        t += 0.05;   if (r < t) return "chaos";
+        t += 0.15;   if (r < t) return "minigame";
+        t += 0.25;   if (r < t) return "tease";
+        t += 0.10;   if (r < t) return "destiny";
+        return "normal";
+      }
+
+      function setTint(mode){
+        tintLayer.className = "";
+        if (!mode) { tintLayer.classList.remove("on"); return; }
+        tintLayer.classList.add("on");
+        tintLayer.classList.add("mode-" + mode);
+      }
+
+      function confettiBurst(count=70){
+        for (let i=0;i<count;i++){
+          const c = document.createElement("div");
+          c.className = "confetti";
+          c.style.left = (Math.random()*100) + "vw";
+          c.style.animationDuration = (2.4 + Math.random()*2.2) + "s";
+          c.style.transform = `rotate(${Math.random()*360}deg)`;
+          c.style.background = `hsl(${Math.floor(Math.random()*360)}, 90%, 70%)`;
+          document.body.appendChild(c);
+          setTimeout(()=>c.remove(), 5200);
+        }
+      }
+
+      function starBurst(count=40){
+        const stars = ["✨","⭐","🌟"];
+        for (let i=0;i<count;i++){
+          const s = document.createElement("div");
+          s.className = "star";
+          s.textContent = stars[Math.floor(Math.random()*stars.length)];
+          s.style.left = (Math.random()*100) + "vw";
+          s.style.animationDuration = (2.8 + Math.random()*2.3) + "s";
+          document.body.appendChild(s);
+          setTimeout(()=>s.remove(), 5600);
+        }
+      }
+
+      function goldRise(count=90){
+        for (let i=0;i<count;i++){
+          const g = document.createElement("div");
+          g.className = "gold";
+          g.style.left = (Math.random()*100) + "vw";
+          g.style.setProperty("--dx", (Math.random()*120 - 60) + "px");
+          g.style.setProperty("--s", (0.7 + Math.random()*1.4).toFixed(2));
+          g.style.animationDuration = (2.6 + Math.random()*2.4) + "s";
+          document.body.appendChild(g);
+          setTimeout(()=>g.remove(), 6000);
+        }
+      }
+
+      // Commitment sound (simple chime — we add real music later)
+      function playCommitChime(){
+        try{
+          const ctx = new (window.AudioContext || window.webkitAudioContext)();
+          const now = ctx.currentTime;
+
+          function tone(freq, start, dur){
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.type = "sine";
+            o.frequency.value = freq;
+            g.gain.setValueAtTime(0.0001, start);
+            g.gain.exponentialRampToValueAtTime(0.25, start + 0.02);
+            g.gain.exponentialRampToValueAtTime(0.0001, start + dur);
+            o.connect(g); g.connect(ctx.destination);
+            o.start(start); o.stop(start + dur + 0.02);
+          }
+
+          tone(659.25, now, 0.18);  // E5
+          tone(783.99, now+0.18, 0.18); // G5
+          tone(987.77, now+0.36, 0.28); // B5
+          setTimeout(()=>ctx.close(), 1200);
+        } catch(_) {}
+      }
+
+      function resetOverlayUI(){
+        document.body.classList.remove("legendary");
+        setTint(null);
+        miniGame.style.display = "none";
+        heartArena.innerHTML = "";
+        heartScoreEl.textContent = "0";
+        surpriseWrap.classList.remove("show");
+      }
+        // ---- NO click (fade at 4 + 30% return) ----
       noBtn.addEventListener("click", (e) => {
         const x = e.clientX || (window.innerWidth/2);
         const y = e.clientY || (window.innerHeight/2);
-
         popAt(x,y);
 
         if (noPresses >= 4) return;
@@ -687,7 +1026,7 @@
           setTarget(target.x + 140, target.y - 80);
           setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
 
-          // 30% chance No returns
+          // 30% chance No returns after 1.4s
           setTimeout(() => {
             if (Math.random() < 0.30) {
               const returnMessages = [
@@ -697,16 +1036,13 @@
                 "No went out there… and panicked. So it came back 😭💘",
                 "No said \"nevermind\" and spawned back in 😭🌹"
               ];
+              showToast(returnMessages[Math.floor(Math.random()*returnMessages.length)]);
 
-              showToast(returnMessages[Math.floor(Math.random() * returnMessages.length)]);
-
-              // bring it back: 4 -> 3 so it can be pressed again
               noPresses = 3;
-
               noBtn.style.opacity = "1";
               noBtn.style.pointerEvents = "auto";
 
-              // grace window so phone taps can register before it runs away again
+              // grace window so it can be pressed on phone
               noReturnGraceUntil = Date.now() + 700;
 
               setNoOpacity();
@@ -733,18 +1069,132 @@
         setTimeout(() => evade(x,y), 120);
       });
 
-      // YES
+      // ---- Mini-game ending ----
+      let gameScore = 0;
+      let heartTTL = 1200;
+
+      function startMiniGame(){
+        gameScore = 0;
+        heartTTL = 1200;
+        heartScoreEl.textContent = "0";
+        miniGame.style.display = "block";
+        yesLine.textContent = "Mini challenge: catch 5 hearts and I’ll reveal the surprise 😌💘";
+        spawnGameHeart();
+      }
+
+      function spawnGameHeart(){
+        heartArena.innerHTML = "";
+        const arena = heartArena.getBoundingClientRect();
+
+        const h = document.createElement("div");
+        h.className = "gameHeart";
+        h.textContent = "💗";
+
+        const pad = 24;
+        const maxX = Math.max(0, arena.width - pad*2);
+        const maxY = Math.max(0, arena.height - pad*2);
+
+        h.style.left = (pad + Math.random()*maxX) + "px";
+        h.style.top  = (pad + Math.random()*maxY) + "px";
+
+        heartArena.appendChild(h);
+
+        let gone = false;
+        const kill = setTimeout(() => {
+          if (gone) return;
+          gone = true;
+          h.classList.add("vanish");
+          showToast("Oop—too slow 😭 Try again");
+          setTimeout(spawnGameHeart, 250);
+        }, heartTTL);
+
+        h.addEventListener("click", () => {
+          if (gone) return;
+          gone = true;
+          clearTimeout(kill);
+          h.classList.add("vanish");
+
+          gameScore++;
+          heartScoreEl.textContent = String(gameScore);
+
+          // gets faster each catch
+          heartTTL = Math.max(520, Math.floor(heartTTL * 0.88));
+
+          if (gameScore >= 5){
+            showToast("Okay okay… you win 😌💝");
+            yesLine.textContent = "You beat the mini game 😭💖 Now press “Press me 😌💝” for your surprise.";
+            heartArena.innerHTML = "";
+            return;
+          }
+          setTimeout(spawnGameHeart, 220);
+        });
+      }
+
+      // ---- YES click -> pick ending ----
       yesBtn.addEventListener("click", (e) => {
         popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
 
         overlay.classList.add("show");
+        resetOverlayUI();
+
+        const ending = pickEnding();
+
+        // Pity rules: only applies when NOT forced
+        if (!forcedEnding){
+          if (ending === "commitment") pityStacks = 0;
+          else pityStacks = clamp(pityStacks + 1, 0, 20); // internally stacks, but chance is capped anyway
+        }
 
         if (noPresses === 0){
           yesTitle.textContent = "Awww you pressed it on the first try 😭💖";
-          yesLine.textContent = "That was too easy… but I’m not complaining 😌🌹";
         } else {
           yesTitle.textContent = "You said YESSS 💖";
+        }
+
+        // Apply ending visuals + text
+        if (ending === "normal"){
+          setTint(null);
           yesLine.textContent = "I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹";
+          confettiBurst(55);
+        }
+
+        if (ending === "chaos"){
+          setTint("chaos");
+          yesLine.textContent = chaosLines[Math.floor(Math.random()*chaosLines.length)];
+          confettiBurst(90);
+        }
+
+        if (ending === "tease"){
+          setTint("tease");
+          yesLine.textContent = teaseLines[Math.floor(Math.random()*teaseLines.length)];
+          confettiBurst(70);
+        }
+
+        if (ending === "destiny"){
+          setTint("destiny");
+          yesLine.textContent = destinyLines[Math.floor(Math.random()*destinyLines.length)];
+          starBurst(55);
+          confettiBurst(55);
+        }
+
+        if (ending === "minigame"){
+          setTint("minigame");
+          confettiBurst(50);
+          startMiniGame();
+        }
+
+        if (ending === "commitment"){
+          setTint("commitment");
+          document.body.classList.add("legendary");
+
+          yesTitle.textContent = "💍 The Commitment Ending 💍";
+          yesLine.textContent = "You just pulled the legendary ending… so yeah. You’re stuck with me 😌💛";
+
+          // Legendary effects
+          playCommitChime();
+          confettiBurst(130);
+          starBurst(80);
+          goldRise(120);
         }
       });
 
@@ -767,7 +1217,7 @@
         noBtn.style.opacity = "1";
         noBtn.style.pointerEvents = "auto";
 
-        surpriseWrap.classList.remove("show");
+        resetOverlayUI();
         updateHeartBeat();
         setTimeout(placeNoNextToYes, 0);
       });
@@ -776,7 +1226,7 @@
       updateHeartBeat();
       setTimeout(placeNoNextToYes, 0);
       window.addEventListener("resize", () => setTimeout(placeNoNextToYes, 0));
-          });
+           });
   </script>
 </body>
 </html>
