@@ -647,30 +647,7 @@
         "That button is fighting for its life 😂💗"
       ];
 
-      noBtn.addEventListener("click", (e) => {
-        const x = e.clientX || (window.innerWidth/2);
-        const y = e.clientY || (window.innerHeight/2);
-
-        popAt(x,y);
-
-        if (noPresses >= 4) return;
-
-        noPresses++;
-        setYesScale();
-        setNoOpacity();
-        updateHeartBeat();
-
-        if (noPresses === 4){
-          showToast("Plot Twist: No has left to find its own Valentine 💘");
-          noBtn.style.pointerEvents = "none";
-          
-          setTarget(target.x + 140, target.y - 80);
-          setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
-
-          // 30% chance of No returning
-          setTimeout((() => {
-            if (Math.random() < 0.30) {
-              const returnMessages = [
+     const returnMessages = [
   "Plot Twist: No failed to find a Valentine… and came back 🥺💗",
   "No realized the streets are cold and returned immediately 🥶💞",
   "No tried to leave… but missed you already 😌💕",
@@ -699,12 +676,6 @@ noBtn.animate(
   ],
   { duration: 350, easing: "ease-in-out" }
 );
-          return;
-        }
-
-        showToast(noMessages[(noPresses - 1) % noMessages.length]);
-        setTimeout(() => evade(x,y), 120);
-      });
 
       // YES
       yesBtn.addEventListener("click", (e) => {
