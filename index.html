@@ -663,8 +663,42 @@
         if (noPresses === 4){
           showToast("Plot Twist: No has left to find its own Valentine 💘");
           noBtn.style.pointerEvents = "none";
+          
           setTarget(target.x + 140, target.y - 80);
           setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
+
+          // 30% chance of No returning
+          setTimeout((() => {
+            if (Math.random() < 0.30) {
+              const returnMessages = [
+  "Plot Twist: No failed to find a Valentine… and came back 🥺💗",
+  "No realized the streets are cold and returned immediately 🥶💞",
+  "No tried to leave… but missed you already 😌💕",
+  "No went out there… and panicked. So it came back 😭💘",
+  "No said “nevermind” and spawned back in 😭🌹"
+];
+
+showToast(returnMessages[Math.floor(Math.random() * returnMessages.length)]);
+
+// bring it back: 4 -> 3 so she can press it again
+noPresses = 3;
+
+Object.assign(noBtn.style, { opacity: "1", pointerEvents: "auto" });
+
+setNoOpacity();
+updateHeartBeat();
+placeNoNextToYes();
+
+noBtn.animate(
+  [
+    { transform: "scale(0.9) translateX(0px)" },
+    { transform: "scale(0.9) translateX(-4px)" },
+    { transform: "scale(0.9) translateX(4px)" },
+    { transform: "scale(0.9) translateX(-3px)" },
+    { transform: "scale(0.9) translateX(0px)" }
+  ],
+  { duration: 350, easing: "ease-in-out" }
+);
           return;
         }
 
