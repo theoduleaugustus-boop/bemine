@@ -183,12 +183,6 @@
       z-index:3;
     }
 
-    .hint{
-      margin-top:10px;
-      font-size:12px;
-      color: rgba(107,58,90,.78);
-    }
-
     .toast{
       position:absolute;
       left:50%;
@@ -281,20 +275,6 @@
       font-weight:900;
     }
 
-    .confetti{
-      position:fixed;
-      width:10px; height:16px;
-      top:-20px;
-      border-radius:4px;
-      opacity:.95;
-      pointer-events:none;
-      animation: confFall linear forwards;
-      z-index:1000;
-    }
-    @keyframes confFall{
-      to{ transform: translateY(120vh) rotate(720deg); opacity:0.95; }
-    }
-
     /* Surprise vinyl */
     .surpriseWrap{ display:none; margin:10px auto 14px; width:min(560px, 100%); }
     .surpriseWrap.show{ display:block; }
@@ -381,103 +361,6 @@
       100%{ transform: translate(0,0) rotate(0deg); }
     }
 
-    /* Mini-game heart */
-    #miniGame{ display:none; margin-top:10px; }
-    #heartArena{
-      position:relative;
-      width:min(520px, 100%);
-      height:180px;
-      margin:0 auto;
-    }
-    .gameHeart{
-      position:absolute;
-      font-size:34px;
-      cursor:pointer;
-      user-select:none;
-      filter: drop-shadow(0 12px 14px rgba(255,79,163,.22));
-      transform: scale(.9);
-      animation: heartPop .18s ease-out forwards;
-    }
-    @keyframes heartPop{ to { transform: scale(1); } }
-    .gameHeart.vanish{ animation: heartVanish .18s ease-in forwards; }
-    @keyframes heartVanish{ to { transform: scale(.5); opacity:0; } }
-
-    /* Chaos shake (rare 5%) */
-    .shake { animation: shake .5s ease-in-out 2; }
-    @keyframes shake{
-      0%{ transform: translate(0,0); }
-      20%{ transform: translate(8px,-6px); }
-      40%{ transform: translate(-8px,6px); }
-      60%{ transform: translate(7px,5px); }
-      80%{ transform: translate(-7px,-5px); }
-      100%{ transform: translate(0,0); }
-    }
-
-    /* 👑 Owner/Admin panel */
-    .ownerPanel{
-      position:fixed;
-      right:14px;
-      bottom:14px;
-      width:min(320px, calc(100% - 28px));
-      background: rgba(255,255,255,.92);
-      border: 1px solid rgba(255,79,163,.22);
-      border-radius:18px;
-      box-shadow: 0 18px 50px rgba(255,79,163,.22);
-      backdrop-filter: blur(10px);
-      padding:12px;
-      display:none;
-      z-index:5000;
-      text-align:left;
-    }
-    .ownerPanel.show{ display:block; }
-    .ownerTop{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      margin-bottom:10px;
-    }
-    .ownerTitle{
-      font-weight:950;
-      color:#6b2c53;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      white-space:nowrap;
-    }
-    .ownerHint{
-      font-size:12px;
-      color: rgba(107,58,90,.78);
-      margin-top:-6px;
-      margin-bottom:10px;
-    }
-    .ownerGrid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:8px;
-    }
-    .ownerBtn{
-      padding:10px 10px;
-      border-radius:14px;
-      border:1px solid rgba(255,79,163,.20);
-      background: linear-gradient(135deg, rgba(255,79,163,.12), rgba(255,119,183,.12));
-      color:#5b1630;
-      font-weight:900;
-      cursor:pointer;
-      box-shadow:none;
-    }
-    .ownerBtn:active{ transform: scale(.98); }
-    .ownerClose{
-      border:0;
-      background: rgba(255,79,163,.10);
-      color:#6b2c53;
-      font-weight:950;
-      border-radius:12px;
-      padding:8px 10px;
-      cursor:pointer;
-      box-shadow:none;
-    }
-
     @media (max-width:420px){
       button{ width:150px; }
       .btn-zone{ height:210px; }
@@ -486,7 +369,6 @@
     }
   </style>
 </head>
-
 <body>
   <div class="bg" id="bg"></div>
 
@@ -503,26 +385,13 @@
         <button type="button" id="yesBtn">Yes <span class="yesHeart">💓</span></button>
         <button type="button" id="noBtn">No 🥺</button>
       </div>
-
-      <div class="hint"><b>Tip:</b> Tip? That’s something you can get later 😏🔥</div>
     </div>
   </div>
-
+  
   <div class="overlay" id="overlay">
-    <div class="success" id="successCard">
+    <div class="success">
       <h2 id="yesTitle">You said YESSS 💖</h2>
       <p id="yesLine">I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹</p>
-
-      <!-- Mini-game container -->
-      <div id="miniGame">
-        <div style="font-weight:900; color:#6b2c53; margin-bottom:8px;">
-          Catch the heart 😌💘 <span id="heartScore">0</span>
-        </div>
-        <div id="heartArena"></div>
-        <div style="font-size:12px; color:rgba(107,58,90,.75); margin-top:8px;">
-          (It gets faster every time you catch it.)
-        </div>
-      </div>
 
       <div class="actions">
         <button type="button" class="btn3" id="surpriseBtn">Press me 😌💝</button>
@@ -544,27 +413,8 @@
       </div>
     </div>
   </div>
-
-  <!-- 👑 Owner/Admin Panel (hidden unless you activate it) -->
-  <div class="ownerPanel" id="ownerPanel">
-    <div class="ownerTop">
-      <div class="ownerTitle">👑 Owner Mode</div>
-      <button type="button" class="ownerClose" id="ownerClose">Close</button>
-    </div>
-    <div class="ownerHint">Tap an ending to <b>force the next YES</b>. Auto-resets after it triggers.</div>
-
-    <div class="ownerGrid">
-      <button type="button" class="ownerBtn" data-force="normal">Normal 💖</button>
-      <button type="button" class="ownerBtn" data-force="minigame">Mini-game 💘</button>
-      <button type="button" class="ownerBtn" data-force="tease">Tease 😏</button>
-      <button type="button" class="ownerBtn" data-force="destiny">Destiny 🌟</button>
-      <button type="button" class="ownerBtn" data-force="chaos">Chaos 😂</button>
-      <button type="button" class="ownerBtn" data-force="commitment">Commitment 💍</button>
-    </div>
-  </div>
-
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
+  document.addEventListener("DOMContentLoaded", () => {
       const bg = document.getElementById("bg");
       const noBtn = document.getElementById("noBtn");
       const yesBtn = document.getElementById("yesBtn");
@@ -577,87 +427,21 @@
       const yesTitle = document.getElementById("yesTitle");
       const yesLine = document.getElementById("yesLine");
 
-      const miniGame = document.getElementById("miniGame");
-      const heartArena = document.getElementById("heartArena");
-      const heartScoreEl = document.getElementById("heartScore");
-      const successCard = document.getElementById("successCard");
-
-      // 👑 Owner/Admin
-      const ownerPanel = document.getElementById("ownerPanel");
-      const ownerClose = document.getElementById("ownerClose");
-      const ownerBtns = document.querySelectorAll(".ownerBtn");
-
-      // NOTE: Audio logic is NOT added yet (per your request).
-
-      if (!bg || !noBtn || !yesBtn || !btnZone || !overlay || !replayBtn || !surpriseBtn || !surpriseWrap || !toast || !yesTitle || !yesLine || !miniGame || !heartArena || !heartScoreEl || !successCard || !ownerPanel || !ownerClose) {
-        console.log("Missing element(s). Check IDs in HTML.");
+      if (!bg || !noBtn || !yesBtn || !btnZone || !overlay || !replayBtn || !surpriseBtn || !surpriseWrap || !toast || !yesTitle || !yesLine) {
         return;
       }
-
-      // ===== Owner mode state =====
-      let forcedNext = null; // "normal" | "minigame" | "tease" | "destiny" | "chaos" | "commitment"
-
-      function openOwner(){
-        ownerPanel.classList.add("show");
-        showToast("👑 Owner Mode");
-      }
-      function closeOwner(){
-        ownerPanel.classList.remove("show");
-      }
-      function setForced(mode){
-        forcedNext = mode;
-        closeOwner();
-        const label = ({
-          normal:"Normal 💖",
-          minigame:"Mini-game 💘",
-          tease:"Tease 😏",
-          destiny:"Destiny 🌟",
-          chaos:"Chaos 😂",
-          commitment:"Commitment 💍"
-        })[mode] || "Mode";
-        showToast(`👑 Next YES: ${label}`);
-      }
-
-      ownerClose.addEventListener("click", closeOwner);
-      ownerBtns.forEach(btn => {
-        btn.addEventListener("click", () => setForced(btn.getAttribute("data-force")));
-      });
-
-      // Laptop activation: Ctrl + Shift + A
-      document.addEventListener("keydown", (e) => {
-        if (e.ctrlKey && e.shiftKey && (e.key === "A" || e.key === "a")) {
-          e.preventDefault();
-          openOwner();
-        }
-      });
-
-      // Phone activation: 3-finger long press (2s) on background/body (not on buttons)
-      let threeTouchTimer = null;
-      function clearThreeTouch(){
-        if (threeTouchTimer) clearTimeout(threeTouchTimer);
-        threeTouchTimer = null;
-      }
-      document.addEventListener("touchstart", (e) => {
-        // Don't activate if touching buttons/inputs
-        const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : "";
-        if (tag === "button" || tag === "input" || tag === "textarea" || tag === "select") return;
-
-        if (e.touches && e.touches.length === 3) {
-          clearThreeTouch();
-          threeTouchTimer = setTimeout(() => {
-            openOwner();
-            // no vibration / nothing loud
-          }, 2000);
-        }
-      }, { passive:true });
-
-      document.addEventListener("touchend", clearThreeTouch, { passive:true });
-      document.addEventListener("touchcancel", clearThreeTouch, { passive:true });
 
       const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
       const zoneRect = () => btnZone.getBoundingClientRect();
 
       const heartGlyphs = ["💗","💖","💘","💕","💞","❤️","🩷"];
+
+      function showToast(text){
+        toast.textContent = text;
+        toast.classList.add("show");
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(()=> toast.classList.remove("show"), 1400);
+      }
 
       function popAt(x,y){
         const el = document.createElement("div");
@@ -667,13 +451,6 @@
         el.style.top  = (y + (Math.random()*16-8)) + "px";
         document.body.appendChild(el);
         setTimeout(()=>el.remove(), 950);
-      }
-
-      function showToast(text){
-        toast.textContent = text;
-        toast.classList.add("show");
-        clearTimeout(showToast._t);
-        showToast._t = setTimeout(()=> toast.classList.remove("show"), 1400);
       }
 
       function spawnBgHeart(){
@@ -709,20 +486,7 @@
         if (Math.random() < 0.55) spawnSparkle();
       }, 520);
 
-      function burstConfetti(mult=1){
-        const count = Math.floor(120 * mult);
-        for (let i=0;i<count;i++){
-          const c = document.createElement("div");
-          c.className = "confetti";
-          c.style.left = (Math.random()*window.innerWidth) + "px";
-          c.style.animationDuration = (3 + Math.random()*2.5) + "s";
-          c.style.background = `hsl(${Math.random()*360}, 90%, 60%)`;
-          document.body.appendChild(c);
-          setTimeout(()=>c.remove(), 6500);
-        }
-      }
-
-      // Heartbeat + scaling
+      // ===== YES heart beat control =====
       let noPresses = 0;
 
       function updateHeartBeat(){
@@ -731,18 +495,16 @@
         yesBtn.style.setProperty("--beatScale", scale.toFixed(2));
         yesBtn.style.setProperty("--beatSpeed", speed.toFixed(2) + "s");
       }
-
       function setYesScale(){
         const scale = 1 + (noPresses * 0.08);
         yesBtn.style.setProperty("--yesScale", scale.toFixed(2));
       }
-
       function setNoOpacity(){
         const op = Math.max(0.12, 1 - (noPresses * 0.22));
         noBtn.style.setProperty("--noOpacity", op.toFixed(2));
       }
 
-      // Smooth NO movement
+      // ===== Smooth NO movement =====
       let noPos = { x: 0, y: 0 };
       let target = { x: 0, y: 0 };
       let animing = false;
@@ -763,7 +525,7 @@
 
       function smoothStep(){
         animing = true;
-        const ease = 0.11;
+        const ease = 0.11; // smooth + catchable
         noPos.x += (target.x - noPos.x) * ease;
         noPos.y += (target.y - noPos.y) * ease;
 
@@ -772,6 +534,7 @@
 
         const dx = target.x - noPos.x;
         const dy = target.y - noPos.y;
+
         if (Math.hypot(dx,dy) < 0.6){
           noPos.x = target.x; noPos.y = target.y;
           noBtn.style.left = noPos.x + "px";
@@ -826,7 +589,7 @@
         setTarget(rx, ry);
       }
 
-      // proximity move (no hearts)
+      // proximity (desktop)
       document.addEventListener("mousemove", (e) => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
@@ -837,7 +600,7 @@
         if (dist < 92) evade(mx, my);
       }, { passive:true });
 
-      // hearts ONLY on direct hover of NO
+      // hearts ONLY when actually on NO
       noBtn.addEventListener("mouseenter", () => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
@@ -850,12 +613,14 @@
         evade(x,y);
       });
 
-      // mobile touch
+      // mobile move-away
       noBtn.addEventListener("touchstart", (e) => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
+
         const t = e.touches && e.touches[0];
         if (!t) return;
+
         popAt(t.clientX, t.clientY);
         evade(t.clientX, t.clientY);
         e.preventDefault();
@@ -864,6 +629,7 @@
       btnZone.addEventListener("touchmove", (e) => {
         if (overlay.classList.contains("show")) return;
         if (noPresses >= 4) return;
+
         const t = e.touches && e.touches[0];
         if (!t) return;
         evade(t.clientX, t.clientY);
@@ -884,6 +650,7 @@
       noBtn.addEventListener("click", (e) => {
         const x = e.clientX || (window.innerWidth/2);
         const y = e.clientY || (window.innerHeight/2);
+
         popAt(x,y);
 
         if (noPresses >= 4) return;
@@ -894,7 +661,7 @@
         updateHeartBeat();
 
         if (noPresses === 4){
-          showToast("Plot Twist: No has decided to find its own Valentine. 💘");
+          showToast("Plot Twist: No has left to find its own Valentine 💘");
           noBtn.style.pointerEvents = "none";
           setTarget(target.x + 140, target.y - 80);
           setTimeout(() => { noBtn.style.opacity = "0"; }, 380);
@@ -905,138 +672,12 @@
         setTimeout(() => evade(x,y), 120);
       });
 
-      // ===== 15% MINI-GAME =====
-      let gameActive = false;
-      let heartScore = 0;
-      let heartTimer = null;
-      let heartLifetime = 1200;
+      // YES
+      yesBtn.addEventListener("click", (e) => {
+        popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
 
-      function stopHeartGame(){
-        gameActive = false;
-        clearTimeout(heartTimer);
-        heartTimer = null;
-        heartArena.innerHTML = "";
-        miniGame.style.display = "none";
-      }
+        overlay.classList.add("show");
 
-      function startHeartGame(){
-        gameActive = true;
-        heartScore = 0;
-        heartLifetime = 1200;
-        heartScoreEl.textContent = heartScore;
-        miniGame.style.display = "block";
-        heartArena.innerHTML = "";
-        spawnGameHeart();
-      }
-
-      function spawnGameHeart(){
-        if (!gameActive) return;
-
-        heartArena.innerHTML = "";
-        const h = document.createElement("div");
-        h.className = "gameHeart";
-        h.textContent = "💘";
-
-        const arenaRect = heartArena.getBoundingClientRect();
-        const pad = 18;
-        const maxX = Math.max(0, arenaRect.width - pad*2 - 34);
-        const maxY = Math.max(0, arenaRect.height - pad*2 - 34);
-
-        const x = pad + Math.random()*maxX;
-        const y = pad + Math.random()*maxY;
-
-        h.style.left = x + "px";
-        h.style.top  = y + "px";
-
-        h.addEventListener("click", () => {
-          if (!gameActive) return;
-
-          heartScore++;
-          heartScoreEl.textContent = heartScore;
-
-          heartLifetime = Math.max(420, Math.floor(heartLifetime * 0.88));
-
-          h.classList.add("vanish");
-          clearTimeout(heartTimer);
-
-          setTimeout(() => spawnGameHeart(), 120);
-        });
-
-        heartArena.appendChild(h);
-
-        clearTimeout(heartTimer);
-        heartTimer = setTimeout(() => {
-          if (!gameActive) return;
-          h.classList.add("vanish");
-          gameActive = false;
-
-          setTimeout(() => {
-            heartArena.innerHTML = "";
-            miniGame.style.display = "none";
-            yesTitle.textContent = "Okayyyy I saw that 😭💖";
-            yesLine.textContent = `You caught ${heartScore} — still my winner 😌🌹`;
-          }, 180);
-        }, heartLifetime);
-      }
-
-      // ===== Chaos helpers (5%) =====
-      function chaosBurst(){
-        successCard.classList.remove("shake");
-        void successCard.offsetWidth;
-        successCard.classList.add("shake");
-
-        burstConfetti(1.6);
-        for (let i=0;i<30;i++){
-          setTimeout(() => {
-            popAt(Math.random()*window.innerWidth, Math.random()*window.innerHeight);
-          }, i*18);
-        }
-        showToast("BROOO YOU GOT THE CHAOS ENDING 😭💘");
-      }
-
-      // ===== Ending renderer (shared by random + forced) =====
-      function runEnding(mode){
-        stopHeartGame();
-        surpriseWrap.classList.remove("show");
-        burstConfetti(1);
-
-        if (mode === "commitment") {
-          yesTitle.textContent = "Hold on… 💍";
-          yesLine.textContent = "Don’t get used to clicking yes so easily… one day this might be the real question 😌";
-          showToast("You unlocked the 1% ending 😭💍");
-          burstConfetti(1.4);
-          return;
-        }
-
-        if (mode === "chaos") {
-          yesTitle.textContent = "NAH YOU REALLY SAID YES 😂💖";
-          yesLine.textContent = "You just unlocked the chaos ending. I’m never letting you live this down 😭💘";
-          chaosBurst();
-          return;
-        }
-
-        if (mode === "minigame") {
-          yesTitle.textContent = "Bonus round 😌💘";
-          yesLine.textContent = "Catch the heart before it runs away.";
-          startHeartGame();
-          return;
-        }
-
-        if (mode === "tease") {
-          yesTitle.textContent = "You had one job… 😏💘";
-          yesLine.textContent = "Clicking yes that fast? Yeah… you’re not escaping me now 😌";
-          burstConfetti(1.2);
-          return;
-        }
-
-        if (mode === "destiny") {
-          yesTitle.textContent = "This felt meant to be 🌟";
-          yesLine.textContent = "Like… you were always going to choose me 😌💞";
-          showToast("Destiny mode 🌟");
-          return;
-        }
-
-        // normal
         if (noPresses === 0){
           yesTitle.textContent = "Awww you pressed it on the first try 😭💖";
           yesLine.textContent = "That was too easy… but I’m not complaining 😌🌹";
@@ -1044,56 +685,17 @@
           yesTitle.textContent = "You said YESSS 💖";
           yesLine.textContent = "I’m claiming you as my Valentine. No refunds. No returns. Only love. 😌🌹";
         }
-      }
-
-      // ===== YES click with probabilities + Owner forced mode =====
-      yesBtn.addEventListener("click", (e) => {
-        popAt(e.clientX || window.innerWidth/2, e.clientY || window.innerHeight/2);
-
-        overlay.classList.add("show");
-        closeOwner(); // if open, hide it
-        stopHeartGame();
-
-        // 👑 If you forced an ending, use it ONCE then reset
-        if (forcedNext) {
-          const mode = forcedNext;
-          forcedNext = null; // auto-reset after it triggers
-          runEnding(mode);
-          return;
-        }
-
-        const roll = Math.random() * 100;
-
-        // 1% commitment (0 to <1)
-        if (roll < 1) return runEnding("commitment");
-
-        // 5% chaos (1 to <6)
-        if (roll < 6) return runEnding("chaos");
-
-        // 15% mini-game (6 to <21)
-        if (roll < 21) return runEnding("minigame");
-
-        // 10% tease (21 to <31)
-        if (roll < 31) return runEnding("tease");
-
-        // 7% destiny (31 to <38)
-        if (roll < 38) return runEnding("destiny");
-
-        // 62% normal (38 to 100)
-        return runEnding("normal");
       });
 
-      // Surprise: show vinyl
+      // Surprise button
       surpriseBtn.addEventListener("click", () => {
         surpriseWrap.classList.add("show");
         showToast("Okayyy… here’s the surprise 😌🎶");
       });
 
-      // Back to main page (no audio stop yet)
+      // Back to main page
       replayBtn.addEventListener("click", () => {
-        stopHeartGame();
         overlay.classList.remove("show");
-        closeOwner();
 
         noPresses = 0;
         yesBtn.style.setProperty("--yesScale", "1");
@@ -1102,7 +704,6 @@
         noBtn.style.pointerEvents = "auto";
 
         surpriseWrap.classList.remove("show");
-
         updateHeartBeat();
         setTimeout(placeNoNextToYes, 0);
       });
@@ -1115,3 +716,4 @@
   </script>
 </body>
 </html>
+  <script>
